@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  EMPLOYEE
+  MANAGER
+  ADMIN
+}
+
+enum GoalStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+}
+
+enum Uom {
+  NUMERIC
+  PERCENTAGE
+  TIMELINE
+  ZERO_BASED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          Role      @default(EMPLOYEE)
+  department    String
+  managerId     String?
+  manager       User?     @relation("ManagerToEmployee", fields: [managerId], references: [id])
+  teamMembers   User[]    @relation("ManagerToEmployee")
+  
+  goalSheets    GoalSheet[]
+  goals         Goal[]
+  sharedGoals   SharedGoal[]
+  auditLogs     AuditLog[]
+  checkIns      CheckIn[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Cycle {
+  id            String    @id @default(uuid())
+  name          String
+  startDate     DateTime
+  endDate       DateTime
+  isActive      Boolean   @default(false)
+
+  goals         Goal[]
+  goalSheets    GoalSheet[]
+}
+
+model GoalSheet {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  cycleId       String
+  cycle         Cycle     @relation(fields: [cycleId], references: [id])
+  
+  status        GoalStatus @default(DRAFT)
+  totalWeightage Int      @default(0)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([userId, cycleId])
+}
+
+model Goal {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  cycleId       String
+  cycle         Cycle     @relation(fields: [cycleId], references: [id])
+  
+  title         String
+  description   String
+  category      String    // Thrust Area
+  type          String    // Individual, Shared, Stretch
+  priority      String
+  
+  weightage     Int
+  uom           Uom       @default(PERCENTAGE)
+  targetValue   Float
+  actualValue   Float     @default(0)
+  progress      Float     @default(0) // Calculated based on UOM
+  
+  status        GoalStatus @default(DRAFT)
+  dueDate       DateTime
+  
+  isLocked      Boolean   @default(false)
+  
+  checkIns      CheckIn[]
+  sharedGoals   SharedGoal[] @relation("PrimaryGoal")
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model SharedGoal {
+  id             String    @id @default(uuid())
+  primaryGoalId  String
+  primaryGoal    Goal      @relation("PrimaryGoal", fields: [primaryGoalId], references: [id])
+  
+  assignedToId   String
+  assignedTo     User      @relation(fields: [assignedToId], references: [id])
+  
+  weightage      Int
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model CheckIn {
+  id            String    @id @default(uuid())
+  goalId        String
+  goal          Goal      @relation(fields: [goalId], references: [id])
+  
+  userId        String
+  user          User      @relation(fields: [userId], references: [id]) // Person who made the checkin
+  
+  actualValue   Float
+  status        String    // NOT_STARTED, ON_TRACK, COMPLETED
+  comment       String?
+  
+  checkInDate   DateTime  @default(now())
+}
+
+model AuditLog {
+  id            String    @id @default(uuid())
+  action        String
+  entityType    String
+  entityId      String
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  
+  details       String
+  changes       String?   // JSON string of changes
+  
+  timestamp     DateTime  @default(now())
+}

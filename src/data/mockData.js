@@ -1,0 +1,86 @@
+// ═══════════════════════════════════════════════════════
+// ATOMQUEST — Mock Data Engine
+// ═══════════════════════════════════════════════════════
+
+export const USERS = [
+  { id: 'u1', name: 'Arjun Mehta', email: 'arjun@atomquest.io', role: 'employee', managerId: 'u4', department: 'Engineering', avatar: 'AM', title: 'Senior Developer' },
+  { id: 'u2', name: 'Priya Sharma', email: 'priya@atomquest.io', role: 'employee', managerId: 'u4', department: 'Engineering', avatar: 'PS', title: 'Frontend Engineer' },
+  { id: 'u3', name: 'Rahul Gupta', email: 'rahul@atomquest.io', role: 'employee', managerId: 'u5', department: 'Design', avatar: 'RG', title: 'UI/UX Designer' },
+  { id: 'u4', name: 'Sneha Patel', email: 'sneha@atomquest.io', role: 'manager', managerId: null, department: 'Engineering', avatar: 'SP', title: 'Engineering Lead' },
+  { id: 'u5', name: 'Vikram Singh', email: 'vikram@atomquest.io', role: 'manager', managerId: null, department: 'Design', avatar: 'VS', title: 'Design Lead' },
+  { id: 'u6', name: 'Ananya Reddy', email: 'ananya@atomquest.io', role: 'admin', managerId: null, department: 'HR', avatar: 'AR', title: 'HR Director' },
+  { id: 'u7', name: 'Karan Joshi', email: 'karan@atomquest.io', role: 'employee', managerId: 'u4', department: 'Engineering', avatar: 'KJ', title: 'Backend Engineer' },
+  { id: 'u8', name: 'Meera Nair', email: 'meera@atomquest.io', role: 'employee', managerId: 'u5', department: 'Design', avatar: 'MN', title: 'Product Designer' },
+];
+
+export const CYCLES = [
+  { id: 'c1', name: 'FY26 Q1', startDate: '2026-01-01', endDate: '2026-03-31', status: 'completed', isActive: false },
+  { id: 'c2', name: 'FY26 Q2', startDate: '2026-04-01', endDate: '2026-06-30', status: 'active', isActive: true },
+  { id: 'c3', name: 'FY26 Q3', startDate: '2026-07-01', endDate: '2026-09-30', status: 'upcoming', isActive: false },
+  { id: 'c4', name: 'FY26 Q4', startDate: '2026-10-01', endDate: '2026-12-31', status: 'upcoming', isActive: false },
+];
+
+export const GOAL_CATEGORIES = ['Technical', 'Leadership', 'Innovation', 'Customer Impact', 'Learning', 'Operational Excellence'];
+export const GOAL_TYPES = ['Individual', 'Shared', 'Stretch'];
+export const PRIORITY_LEVELS = ['Critical', 'High', 'Medium', 'Low'];
+
+export const STATUS_CONFIG = {
+  draft: { label: 'Draft', color: '#6b6b8d', bg: 'rgba(107,107,141,0.12)' },
+  pending: { label: 'Pending Approval', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
+  approved: { label: 'Approved', color: '#10b981', bg: 'rgba(16,185,129,0.12)' },
+  rejected: { label: 'Rejected', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' },
+  in_progress: { label: 'In Progress', color: '#6366f1', bg: 'rgba(99,102,241,0.12)' },
+  completed: { label: 'Completed', color: '#06b6d4', bg: 'rgba(6,182,212,0.12)' },
+  on_hold: { label: 'On Hold', color: '#a855f7', bg: 'rgba(168,85,247,0.12)' },
+};
+
+let goalIdCounter = 20;
+export const generateGoalId = () => `g${++goalIdCounter}`;
+
+export const INITIAL_GOALS = [
+  { id: 'g1', title: 'Migrate API to GraphQL', description: 'Complete migration of REST endpoints to GraphQL with federation support', userId: 'u1', cycleId: 'c2', category: 'Technical', type: 'Individual', priority: 'High', weightage: 30, progress: 65, status: 'approved', createdAt: '2026-04-02T10:00:00Z', updatedAt: '2026-05-10T14:30:00Z', dueDate: '2026-06-15', milestones: ['Schema design', 'Resolver impl', 'Testing', 'Deploy'], achievements: 'Completed schema design and 70% of resolvers', quarterlyUpdates: [{ quarter: 'Q2', note: 'On track — resolvers 70% done', date: '2026-05-01' }] },
+  { id: 'g2', title: 'Reduce page load time by 40%', description: 'Optimize bundle size, implement code splitting, and CDN caching', userId: 'u1', cycleId: 'c2', category: 'Technical', type: 'Individual', priority: 'Critical', weightage: 25, progress: 45, status: 'approved', createdAt: '2026-04-02T10:30:00Z', updatedAt: '2026-05-08T09:00:00Z', dueDate: '2026-06-20', milestones: ['Audit', 'Code split', 'CDN setup', 'Verify'], achievements: 'Bundle reduced by 25%', quarterlyUpdates: [{ quarter: 'Q2', note: 'Bundle optimized, CDN pending', date: '2026-05-01' }] },
+  { id: 'g3', title: 'Mentor 2 junior developers', description: 'Conduct weekly 1:1s, code reviews, and pair programming sessions', userId: 'u1', cycleId: 'c2', category: 'Leadership', type: 'Individual', priority: 'Medium', weightage: 20, progress: 80, status: 'approved', createdAt: '2026-04-03T11:00:00Z', updatedAt: '2026-05-12T16:00:00Z', dueDate: '2026-06-30', milestones: ['Pair with Dev A', 'Pair with Dev B', 'Final review'], achievements: 'Both juniors shipped features independently', quarterlyUpdates: [] },
+  { id: 'g4', title: 'Complete AWS Solutions Architect cert', description: 'Study and pass the AWS Solutions Architect Professional exam', userId: 'u1', cycleId: 'c2', category: 'Learning', type: 'Individual', priority: 'Low', weightage: 15, progress: 30, status: 'approved', createdAt: '2026-04-05T09:00:00Z', updatedAt: '2026-05-06T11:00:00Z', dueDate: '2026-06-25', milestones: ['Study plan', 'Practice exams', 'Final exam'], achievements: 'Completed 3 practice tests', quarterlyUpdates: [] },
+  { id: 'g5', title: 'Launch design system v2', description: 'Redesign and publish component library with dark mode support', userId: 'u1', cycleId: 'c2', category: 'Innovation', type: 'Shared', priority: 'High', weightage: 10, progress: 55, status: 'approved', createdAt: '2026-04-04T14:00:00Z', updatedAt: '2026-05-11T10:00:00Z', dueDate: '2026-06-28', milestones: ['Design tokens', 'Core components', 'Dark mode', 'Docs'], achievements: 'Tokens and 60% of components shipped', quarterlyUpdates: [{ quarter: 'Q2', note: 'Dark mode in progress', date: '2026-05-10' }] },
+  { id: 'g6', title: 'Build component library', description: 'Create reusable React component library with Storybook docs', userId: 'u2', cycleId: 'c2', category: 'Technical', type: 'Individual', priority: 'High', weightage: 35, progress: 70, status: 'approved', createdAt: '2026-04-02T09:00:00Z', updatedAt: '2026-05-13T12:00:00Z', dueDate: '2026-06-20', milestones: ['Setup', 'Core components', 'Storybook', 'Publish'], achievements: '15 components published', quarterlyUpdates: [] },
+  { id: 'g7', title: 'Improve accessibility score to 95+', description: 'Audit and fix accessibility issues across the application', userId: 'u2', cycleId: 'c2', category: 'Customer Impact', type: 'Individual', priority: 'High', weightage: 30, progress: 50, status: 'approved', createdAt: '2026-04-03T10:00:00Z', updatedAt: '2026-05-09T14:00:00Z', dueDate: '2026-06-25', milestones: ['Audit', 'Fix critical', 'Fix moderate', 'Retest'], achievements: 'Score improved from 72 to 88', quarterlyUpdates: [] },
+  { id: 'g8', title: 'Write technical blog posts', description: 'Publish 4 blog posts on engineering best practices', userId: 'u2', cycleId: 'c2', category: 'Leadership', type: 'Individual', priority: 'Medium', weightage: 15, progress: 25, status: 'approved', createdAt: '2026-04-05T11:00:00Z', updatedAt: '2026-05-05T09:00:00Z', dueDate: '2026-06-30', milestones: ['Post 1', 'Post 2', 'Post 3', 'Post 4'], achievements: '1 post published, 1 in review', quarterlyUpdates: [] },
+  { id: 'g9', title: 'React performance workshop', description: 'Conduct internal workshop on React performance optimization', userId: 'u2', cycleId: 'c2', category: 'Learning', type: 'Individual', priority: 'Low', weightage: 20, progress: 60, status: 'pending', createdAt: '2026-04-06T15:00:00Z', updatedAt: '2026-05-14T10:00:00Z', dueDate: '2026-06-15', milestones: ['Content prep', 'Slides', 'Deliver'], achievements: 'Content ready, slides WIP', quarterlyUpdates: [] },
+  { id: 'g10', title: 'Redesign onboarding flow', description: 'Create new user onboarding experience with guided tours', userId: 'u3', cycleId: 'c2', category: 'Customer Impact', type: 'Individual', priority: 'Critical', weightage: 40, progress: 35, status: 'approved', createdAt: '2026-04-02T10:00:00Z', updatedAt: '2026-05-10T11:00:00Z', dueDate: '2026-06-20', milestones: ['Research', 'Wireframes', 'Prototype', 'Test', 'Ship'], achievements: 'Wireframes approved, prototyping started', quarterlyUpdates: [{ quarter: 'Q2', note: 'User research completed with 12 interviews', date: '2026-05-01' }] },
+  { id: 'g11', title: 'Create illustration system', description: 'Design consistent illustration style guide and assets', userId: 'u3', cycleId: 'c2', category: 'Innovation', type: 'Individual', priority: 'Medium', weightage: 30, progress: 20, status: 'approved', createdAt: '2026-04-04T09:00:00Z', updatedAt: '2026-05-07T16:00:00Z', dueDate: '2026-06-30', milestones: ['Style exploration', 'Core set', 'Guidelines'], achievements: 'Style direction finalized', quarterlyUpdates: [] },
+  { id: 'g12', title: 'Design system documentation', description: 'Write comprehensive usage guidelines for the design system', userId: 'u3', cycleId: 'c2', category: 'Operational Excellence', type: 'Shared', priority: 'High', weightage: 30, progress: 45, status: 'approved', createdAt: '2026-04-03T14:00:00Z', updatedAt: '2026-05-12T09:00:00Z', dueDate: '2026-06-25', milestones: ['Structure', 'Write docs', 'Review', 'Publish'], achievements: '60% of pages drafted', quarterlyUpdates: [] },
+  { id: 'g13', title: 'Implement CI/CD pipeline', description: 'Set up automated testing and deployment pipeline', userId: 'u7', cycleId: 'c2', category: 'Technical', type: 'Individual', priority: 'Critical', weightage: 40, progress: 80, status: 'approved', createdAt: '2026-04-01T09:00:00Z', updatedAt: '2026-05-14T15:00:00Z', dueDate: '2026-06-15', milestones: ['Pipeline design', 'Build stage', 'Test stage', 'Deploy stage'], achievements: 'Pipeline live, monitoring being added', quarterlyUpdates: [{ quarter: 'Q2', note: 'All stages working, adding alerts', date: '2026-05-10' }] },
+  { id: 'g14', title: 'Database optimization', description: 'Optimize slow queries and implement connection pooling', userId: 'u7', cycleId: 'c2', category: 'Technical', type: 'Individual', priority: 'High', weightage: 30, progress: 55, status: 'approved', createdAt: '2026-04-02T11:00:00Z', updatedAt: '2026-05-11T10:00:00Z', dueDate: '2026-06-20', milestones: ['Identify slow queries', 'Optimize', 'Pool setup', 'Monitor'], achievements: 'Top 10 queries optimized, 3x faster', quarterlyUpdates: [] },
+  { id: 'g15', title: 'API documentation', description: 'Create OpenAPI specs and developer portal', userId: 'u7', cycleId: 'c2', category: 'Operational Excellence', type: 'Individual', priority: 'Medium', weightage: 30, progress: 40, status: 'pending', createdAt: '2026-04-05T13:00:00Z', updatedAt: '2026-05-08T11:00:00Z', dueDate: '2026-06-30', milestones: ['OpenAPI spec', 'Portal setup', 'Examples'], achievements: 'Spec 80% complete', quarterlyUpdates: [] },
+  { id: 'g16', title: 'User research framework', description: 'Establish systematic user research process and tools', userId: 'u8', cycleId: 'c2', category: 'Innovation', type: 'Individual', priority: 'High', weightage: 35, progress: 60, status: 'approved', createdAt: '2026-04-02T09:00:00Z', updatedAt: '2026-05-13T14:00:00Z', dueDate: '2026-06-20', milestones: ['Framework design', 'Tool selection', 'Templates', 'Pilot'], achievements: 'Framework documented, 2 pilots completed', quarterlyUpdates: [] },
+  { id: 'g17', title: 'Design critique sessions', description: 'Organize bi-weekly design critique sessions', userId: 'u8', cycleId: 'c2', category: 'Leadership', type: 'Individual', priority: 'Medium', weightage: 25, progress: 70, status: 'approved', createdAt: '2026-04-03T10:00:00Z', updatedAt: '2026-05-12T11:00:00Z', dueDate: '2026-06-30', milestones: ['Format design', 'First session', 'Iterate', 'Document learnings'], achievements: '4 sessions completed, avg 8 participants', quarterlyUpdates: [] },
+  { id: 'g18', title: 'Prototype design tool evaluation', description: 'Evaluate and recommend next-gen prototyping tools', userId: 'u8', cycleId: 'c2', category: 'Learning', type: 'Individual', priority: 'Low', weightage: 15, progress: 90, status: 'approved', createdAt: '2026-04-04T14:00:00Z', updatedAt: '2026-05-14T09:00:00Z', dueDate: '2026-06-10', milestones: ['Research', 'Trial', 'Report'], achievements: 'Report submitted, Figma + Framer recommended', quarterlyUpdates: [] },
+  { id: 'g19', title: 'Cross-team design alignment', description: 'Ensure consistent design language across all product teams', userId: 'u8', cycleId: 'c2', category: 'Customer Impact', type: 'Shared', priority: 'High', weightage: 25, progress: 40, status: 'approved', createdAt: '2026-04-05T11:00:00Z', updatedAt: '2026-05-10T16:00:00Z', dueDate: '2026-06-28', milestones: ['Audit', 'Standards doc', 'Review sessions', 'Sign-off'], achievements: 'Audit completed, standards doc in review', quarterlyUpdates: [] },
+];
+
+export const INITIAL_AUDIT_LOGS = [
+  { id: 'a1', action: 'goal_created', entityType: 'goal', entityId: 'g1', userId: 'u1', timestamp: '2026-04-02T10:00:00Z', details: 'Created goal: Migrate API to GraphQL', changes: { field: 'status', from: null, to: 'draft' } },
+  { id: 'a2', action: 'goal_submitted', entityType: 'goal', entityId: 'g1', userId: 'u1', timestamp: '2026-04-02T10:15:00Z', details: 'Submitted goal for approval', changes: { field: 'status', from: 'draft', to: 'pending' } },
+  { id: 'a3', action: 'goal_approved', entityType: 'goal', entityId: 'g1', userId: 'u4', timestamp: '2026-04-02T14:00:00Z', details: 'Approved by Sneha Patel', changes: { field: 'status', from: 'pending', to: 'approved' } },
+  { id: 'a4', action: 'progress_updated', entityType: 'goal', entityId: 'g1', userId: 'u1', timestamp: '2026-05-10T14:30:00Z', details: 'Progress updated from 50% to 65%', changes: { field: 'progress', from: 50, to: 65 } },
+  { id: 'a5', action: 'goal_created', entityType: 'goal', entityId: 'g6', userId: 'u2', timestamp: '2026-04-02T09:00:00Z', details: 'Created goal: Build component library', changes: { field: 'status', from: null, to: 'draft' } },
+  { id: 'a6', action: 'goal_approved', entityType: 'goal', entityId: 'g6', userId: 'u4', timestamp: '2026-04-02T15:00:00Z', details: 'Approved by Sneha Patel', changes: { field: 'status', from: 'pending', to: 'approved' } },
+  { id: 'a7', action: 'cycle_created', entityType: 'cycle', entityId: 'c2', userId: 'u6', timestamp: '2026-03-25T09:00:00Z', details: 'Created cycle FY26 Q2', changes: {} },
+  { id: 'a8', action: 'goal_rejected', entityType: 'goal', entityId: 'g15', userId: 'u4', timestamp: '2026-05-08T11:00:00Z', details: 'Rejected: needs clearer milestones', changes: { field: 'status', from: 'pending', to: 'rejected' } },
+];
+
+export const INITIAL_NOTIFICATIONS = [
+  { id: 'n1', type: 'approval', title: 'Goal Approved', message: 'Your goal "Migrate API to GraphQL" was approved by Sneha Patel', userId: 'u1', read: true, timestamp: '2026-04-02T14:00:00Z' },
+  { id: 'n2', type: 'reminder', title: 'Quarterly Update Due', message: 'Submit your Q2 progress update for 3 goals', userId: 'u1', read: false, timestamp: '2026-05-15T09:00:00Z' },
+  { id: 'n3', type: 'approval_request', title: 'New Goal Pending', message: 'Priya Sharma submitted "React performance workshop" for approval', userId: 'u4', read: false, timestamp: '2026-05-14T10:00:00Z' },
+  { id: 'n4', type: 'approval_request', title: 'New Goal Pending', message: 'Karan Joshi submitted "API documentation" for approval', userId: 'u4', read: false, timestamp: '2026-05-08T11:00:00Z' },
+  { id: 'n5', type: 'system', title: 'Q2 Cycle Active', message: 'FY26 Q2 goal-setting window is now open', userId: 'all', read: true, timestamp: '2026-04-01T00:00:00Z' },
+  { id: 'n6', type: 'achievement', title: 'Goal Near Completion', message: 'Your goal "Prototype design tool evaluation" is at 90%', userId: 'u8', read: false, timestamp: '2026-05-14T09:00:00Z' },
+];
+
+export const SHARED_GOALS = [
+  { id: 'sg1', title: 'Achieve 99.9% uptime SLA', department: 'Engineering', cycleId: 'c2', weightage: 20, progress: 75, assignedTo: ['u1', 'u2', 'u7'], lockedFields: ['title', 'description'] },
+  { id: 'sg2', title: 'Improve NPS score to 70+', department: 'Design', cycleId: 'c2', weightage: 25, progress: 55, assignedTo: ['u3', 'u8'], lockedFields: ['title'] },
+  { id: 'sg3', title: 'Reduce customer churn by 15%', department: 'All', cycleId: 'c2', weightage: 15, progress: 40, assignedTo: ['u1', 'u2', 'u3', 'u7', 'u8'], lockedFields: ['title', 'description', 'dueDate'] },
+];
