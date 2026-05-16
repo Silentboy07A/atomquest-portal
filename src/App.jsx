@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Sidebar from './components/Shared/Sidebar';
@@ -12,6 +12,7 @@ import AuditPage from './pages/AuditPage';
 import NotificationsPage from './pages/NotificationsPage';
 import SharedGoalsPage from './pages/SharedGoalsPage';
 import AdminPage from './pages/AdminPage';
+import LoginPage from './pages/LoginPage';
 import { useStore } from './store/useStore';
 
 function AppLayout() {
@@ -44,6 +45,28 @@ function AppLayout() {
 }
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  if (!isLoggedIn) {
+    return (
+      <>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: '#1c1c32',
+              color: '#e8e8f0',
+              border: '1px solid rgba(24, 95, 165, 0.2)',
+              borderRadius: '12px',
+              fontSize: '14px',
+            },
+          }}
+        />
+        <LoginPage onLogin={() => setIsLoggedIn(true)} />
+      </>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Toaster

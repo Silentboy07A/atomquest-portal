@@ -2,9 +2,41 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { StatusBadge, ProgressBar, PriorityBadge, Card, Modal, EmptyState } from '../components/Shared/UIComponents';
-import { Target, Plus, Edit3, Trash2, Send, Search, Eye, Lock, AlertCircle } from 'lucide-react';
+import { Target, Plus, Edit3, Trash2, Send, Search, Eye, Lock, AlertCircle, Download } from 'lucide-react';
 import { GOAL_CATEGORIES, GOAL_TYPES, PRIORITY_LEVELS } from '../data/mockData';
 import { validateGoal, getWeightageSummary, formatDate, isGoalLocked } from '../utils/helpers';
+
+function exportGoalsToCSV(goalsList, users) {
+  const headers = ['Employee Name', 'Goal Title', 'Thrust Area', 'UoM', 'Target', 'Actual Achievement', 'Progress %', 'Status', 'Due Date'];
+  const escapeCSV = (val) => {
+    const str = String(val ?? '');
+    return str.includes(',') || str.includes('"') || str.includes('\n') ? `"${str.replace(/"/g, '""')}"` : str;
+  };
+  const rows = goalsList.map((g) => {
+    const owner = users.find((u) => u.id === g.userId);
+    return [
+      escapeCSV(owner?.name || 'Unknown'),
+      escapeCSV(g.title),
+      escapeCSV(g.category),
+      escapeCSV(g.uom || 'Percentage'),
+      escapeCSV(g.targetValue ?? 100),
+      escapeCSV(g.actualValue ?? Math.round((g.progress / 100) * (g.targetValue ?? 100))),
+      escapeCSV(g.progress),
+      escapeCSV(g.status?.charAt(0).toUpperCase() + g.status?.slice(1)),
+      escapeCSV(formatDate(g.dueDate)),
+    ].join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `atomquest_goals_${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } } };
@@ -48,11 +80,20 @@ export default function GoalsPage() {
             {activeCycle?.name} · {myGoals.length} goals · {ws.total}/100 Weightage
           </p>
         </div>
-        {!isAdmin && (
-          <button onClick={openCreate} className="btn btn-primary" disabled={myGoals.filter((g) => g.status !== 'rejected').length >= 8}>
-            <Plus size={16} /> Create Goal
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => exportGoalsToCSV(filtered, users)}
+            className="btn btn-secondary flex items-center gap-2"
+            title="Export goals to CSV"
+          >
+            <Download size={15} /> Export CSV
           </button>
-        )}
+          {!isAdmin && (
+            <button onClick={openCreate} className="btn btn-primary" disabled={myGoals.filter((g) => g.status !== 'rejected').length >= 8}>
+              <Plus size={16} /> Create Goal
+            </button>
+          )}
+        </div>
       </motion.div>
 
       {/* Weightage Warning */}
