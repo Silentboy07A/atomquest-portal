@@ -157,5 +157,4 @@ export default function LoginPage({ onLogin }) {
       `}</style>
     </div>
   );
-  );
 }
