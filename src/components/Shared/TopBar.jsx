@@ -9,51 +9,44 @@ export default function TopBar({ title, subtitle }) {
 
   return (
     <header
-      className="h-14 flex items-center justify-between px-6 sticky top-0 z-20"
+      className="h-[60px] flex items-center justify-between px-6 sticky top-0 z-20"
       style={{
-        background: 'var(--color-dark-950)',
-        borderBottom: '1px solid var(--color-dark-700)',
+        background: '#050508',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
       }}
     >
       <div className="flex items-center gap-3">
-        <h1 className="text-[15px] font-semibold text-[var(--color-dark-50)]" style={{ fontFamily: 'var(--font-display)' }}>
+        <h1 className="text-[18px] font-bold text-[#f1f5f9]">
           {title}
         </h1>
-        {subtitle && (
-          <span className="text-[10px] font-medium text-[var(--color-dark-300)] bg-[var(--color-dark-800)] px-2 py-0.5 rounded-md uppercase tracking-wider border border-[var(--color-dark-600)]">
-            {subtitle}
-          </span>
-        )}
+        <span className="text-[10px] font-medium text-[var(--color-accent-600)] border border-[var(--color-accent-600)] px-2 py-0.5 rounded-[4px] uppercase tracking-wider">
+          {currentUser.role}
+        </span>
       </div>
 
-      <div className="flex items-center gap-2">
-        {/* Search */}
-        <div className="relative hide-mobile">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-dark-400)]" />
+      <div className="flex-1 flex justify-center hide-mobile">
+        <div className="relative w-full max-w-[280px]">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]" />
           <input
             type="text"
             placeholder="Search..."
-            className="input pl-8 !w-52 !bg-[var(--color-dark-800)] !rounded-lg text-[13px] !border-[var(--color-dark-700)] !py-1.5 focus:!border-[var(--color-accent-500)]"
+            className="w-full bg-[#0d1117] border border-[rgba(255,255,255,0.06)] rounded-[8px] pl-10 pr-4 py-2 text-[13px] text-[#f1f5f9] placeholder-[#64748b] outline-none transition-colors focus:border-[var(--color-accent-600)]"
           />
         </div>
+      </div>
 
+      <div className="flex items-center gap-4">
         {/* Notifications */}
-        <button className="relative w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[var(--color-dark-700)] transition-colors">
-          <Bell size={16} className="text-[var(--color-dark-300)]" />
+        <button className="relative w-8 h-8 rounded-lg flex items-center justify-center text-[#64748b] hover:text-[#f1f5f9] transition-colors">
+          <Bell size={18} />
           {unread > 0 && (
-            <span className="absolute top-1 right-1 w-2 h-2 bg-[var(--color-accent-600)] rounded-full" />
+            <span className="absolute top-1 right-1.5 w-2 h-2 rounded-full" style={{ background: 'var(--color-accent-600)' }} />
           )}
         </button>
 
-        {/* Separator */}
-        <div className="w-px h-5 bg-[var(--color-dark-700)] mx-1" />
-
         {/* User */}
-        <div className="flex items-center gap-2.5 cursor-pointer hover:opacity-80 transition-opacity">
-          <div className="hide-mobile text-right">
-            <div className="text-[13px] font-medium text-[var(--color-dark-50)]">{currentUser.name}</div>
-          </div>
-          <Avatar name={currentUser.name} size="sm" />
+        <div className="w-[36px] h-[36px] rounded-full flex items-center justify-center text-white font-semibold text-[13px]" style={{ background: 'linear-gradient(135deg, #0d9488, #4f46e5)' }}>
+          {currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
         </div>
       </div>
     </header>

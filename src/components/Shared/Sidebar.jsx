@@ -76,32 +76,32 @@ export default function Sidebar() {
     <aside
       className="h-screen sticky top-0 flex flex-col z-30 transition-all duration-200"
       style={{
-        width: sidebarOpen ? 232 : 56,
-        background: 'var(--color-dark-900)',
-        borderRight: '1px solid var(--color-dark-700)',
+        width: sidebarOpen ? 220 : 64,
+        background: '#0a0d14',
+        borderRight: '1px solid rgba(255,255,255,0.05)',
       }}
     >
       {/* Brand */}
       <div
-        className="flex items-center gap-2.5 h-[52px] shrink-0"
+        className="flex items-center gap-2.5 shrink-0"
         style={{
-          padding: sidebarOpen ? '0 14px' : '0 10px',
-          borderBottom: '1px solid var(--color-dark-700)',
+          padding: sidebarOpen ? '24px 20px' : '24px 16px',
+          borderBottom: '1px solid rgba(255,255,255,0.04)',
         }}
       >
         <div
-          className="w-7 h-7 rounded-md flex items-center justify-center text-white font-bold shrink-0"
+          className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold shrink-0"
           style={{
             background: 'var(--color-accent-600)',
             fontFamily: 'var(--font-display)',
-            fontSize: 10,
+            fontSize: 12,
           }}
         >
           AQ
         </div>
         {sidebarOpen && (
           <span
-            className="font-semibold text-sm tracking-tight"
+            className="font-bold text-[15px] tracking-tight"
             style={{ fontFamily: 'var(--font-display)', color: 'var(--color-dark-50)' }}
           >
             AtomQuest
@@ -112,19 +112,19 @@ export default function Sidebar() {
           className="ml-auto w-6 h-6 rounded flex items-center justify-center transition-colors"
           style={{ color: 'var(--color-dark-400)' }}
         >
-          {sidebarOpen ? <PanelLeftClose size={14} /> : <PanelLeft size={14} />}
+          {sidebarOpen ? <PanelLeftClose size={16} /> : <PanelLeft size={16} />}
         </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
+      <nav className="flex-1 overflow-y-auto py-2 space-y-2">
         {sections.map((group) => (
           <div key={group.section}>
             {sidebarOpen && (
-              <div className="px-2 pb-1.5">
+              <div style={{ padding: '20px 20px 8px' }}>
                 <span
-                  className="text-[10px] font-medium uppercase tracking-[0.08em]"
-                  style={{ color: 'var(--color-dark-400)' }}
+                  className="text-[10px] font-medium uppercase tracking-[0.1em]"
+                  style={{ color: '#334155' }}
                 >
                   {group.section}
                 </span>
@@ -162,18 +162,18 @@ export default function Sidebar() {
       </nav>
 
       {/* User Switcher */}
-      <div className="p-2 relative" style={{ borderTop: '1px solid var(--color-dark-700)' }}>
+      <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,0.04)' }} className="relative">
         <button
           onClick={() => setUserMenuOpen(!userMenuOpen)}
-          className="w-full flex items-center gap-2 sidebar-link !mb-0"
+          className="w-full flex items-center gap-3 text-left"
         >
           <Avatar name={currentUser.name} size="sm" />
           {sidebarOpen && (
-            <div className="flex-1 text-left overflow-hidden">
-              <div className="text-[12px] font-medium truncate" style={{ color: 'var(--color-dark-100)' }}>
+            <div className="flex-1 overflow-hidden">
+              <div className="text-[13px] font-medium truncate text-[var(--color-dark-50)]">
                 {currentUser.name}
               </div>
-              <div className="text-[10px] capitalize" style={{ color: 'var(--color-dark-400)' }}>
+              <div className="text-[11px] capitalize text-[#334155]">
                 {currentUser.role}
               </div>
             </div>

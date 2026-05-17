@@ -2,21 +2,22 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { StatusBadge, PriorityBadge, Modal, Avatar, EmptyState } from '../components/Shared/UIComponents';
-import { CheckSquare, Check, X, Eye, Clock } from 'lucide-react';
-import { formatDate } from '../utils/helpers';
+import { CheckSquare, Check, X, Eye, Clock, MessageSquare } from 'lucide-react';
+import { formatDate, formatDateTime } from '../utils/helpers';
+import toast from 'react-hot-toast';
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } } };
 
 export default function ApprovalsPage() {
-  const { currentUser, goals, users, cycles, approveGoal, rejectGoal } = useStore();
+  const { currentUser, goals, users, cycles, approveGoal, rejectGoal, updateGoal, auditLogs } = useStore();
   const activeCycle = cycles.find((c) => c.isActive);
   const [viewGoal, setViewGoal] = useState(null);
-  const [rejectModal, setRejectModal] = useState(null);
-  const [rejectReason, setRejectReason] = useState('');
-  const [approveComment, setApproveComment] = useState('');
-  const [approveModal, setApproveModal] = useState(null);
   const [filter, setFilter] = useState('pending');
+  
+  const [edits, setEdits] = useState({});
+  const [rejectingId, setRejectingId] = useState(null);
+  const [rejectReason, setRejectReason] = useState('');
 
   const teamGoals = useMemo(() => {
     return goals.filter((g) => {
@@ -28,20 +29,34 @@ export default function ApprovalsPage() {
   const filtered = filter === 'all' ? teamGoals : teamGoals.filter((g) => g.status === filter);
   const pendingCount = teamGoals.filter((g) => g.status === 'pending').length;
 
-  const handleApprove = () => {
-    if (approveModal) {
-      approveGoal(approveModal.id, approveComment);
-      setApproveModal(null);
-      setApproveComment('');
+  const handleEdit = (id, field, value) => {
+    setEdits(prev => ({ ...prev, [id]: { ...prev[id], [field]: value } }));
+  };
+
+  const handleApprove = (goal) => {
+    if (edits[goal.id]) {
+      updateGoal(goal.id, edits[goal.id]);
+    }
+    approveGoal(goal.id, '');
+    toast.success('Goal approved successfully', { style: { background: '#0d1117', color: '#fff', border: '1px solid #10b981' } });
+  };
+
+  const handleReject = (goal) => {
+    if (rejectReason.trim()) {
+      rejectGoal(goal.id, rejectReason);
+      setRejectingId(null);
+      setRejectReason('');
     }
   };
 
-  const handleReject = () => {
-    if (rejectModal && rejectReason.trim()) {
-      rejectGoal(rejectModal.id, rejectReason);
-      setRejectModal(null);
-      setRejectReason('');
-    }
+  const getApprovalDetails = (goalId) => {
+    const log = auditLogs.find(l => l.entityId === goalId && l.action === 'goal_approved');
+    return log ? { approver: users.find(u => u.id === log.userId)?.name || 'Manager', time: log.timestamp } : null;
+  };
+
+  const getRejectionDetails = (goalId) => {
+    const log = auditLogs.find(l => l.entityId === goalId && l.action === 'goal_rejected');
+    return log ? { reason: log.details.replace('Rejected by ', ''), time: log.timestamp } : null;
   };
 
   return (
@@ -89,7 +104,7 @@ export default function ApprovalsPage() {
 
       {/* Approval Queue */}
       {filtered.length === 0 ? (
-        <EmptyState icon={CheckSquare} title="No goals to review" description="All team goals have been reviewed. Check back later." />
+        <EmptyState icon={CheckSquare} title="All caught up ✓" description="All team goals have been reviewed." />
       ) : (
         <motion.div variants={item} className="space-y-3">
           {filtered.map((goal) => {
@@ -98,7 +113,7 @@ export default function ApprovalsPage() {
               <motion.div 
                 key={goal.id} 
                 layout 
-                className="surface-raised p-4 sm:p-5 hover:border-[var(--color-dark-600)] transition-colors"
+                className="list-card p-4 sm:p-5 flex flex-col gap-4"
               >
                 <div className="flex flex-col md:flex-row gap-5">
                   {/* Employee Info */}
@@ -111,16 +126,33 @@ export default function ApprovalsPage() {
                   </div>
 
                   {/* Goal Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2 flex-wrap">
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex items-center gap-3 flex-wrap">
                       <span className="text-[14px] font-semibold text-[var(--color-dark-50)] truncate" style={{ fontFamily: 'var(--font-display)' }}>{goal.title}</span>
                       <StatusBadge status={goal.status} />
                     </div>
+                    <p className="text-[12px] text-[var(--color-dark-200)] leading-relaxed">{goal.description}</p>
                     <div className="flex items-center gap-x-4 gap-y-2 text-[11px] text-[var(--color-dark-400)] flex-wrap">
                       <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />{goal.category}</span>
-                      <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />Weight: <strong className="text-[var(--color-dark-100)]">{goal.weightage}%</strong></span>
+                      <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />UoM: {goal.uom || 'Numeric'}</span>
+                      {goal.status === 'pending' ? (
+                        <>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />
+                            Target: <input type="text" className="input py-0.5 px-2 text-[11px] w-20 h-6" value={edits[goal.id]?.targetValue ?? goal.targetValue} onChange={(e) => handleEdit(goal.id, 'targetValue', e.target.value)} />
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />
+                            Weight: <input type="number" className="input py-0.5 px-2 text-[11px] w-16 h-6" value={edits[goal.id]?.weightage ?? goal.weightage} onChange={(e) => handleEdit(goal.id, 'weightage', Number(e.target.value))} />%
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />Target: <strong className="text-[var(--color-dark-100)]">{goal.targetValue || 100}</strong></span>
+                          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />Weight: <strong className="text-[var(--color-dark-100)]">{goal.weightage}%</strong></span>
+                        </>
+                      )}
                       <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />Due: {formatDate(goal.dueDate)}</span>
-                      <PriorityBadge priority={goal.priority} />
                     </div>
                   </div>
 
@@ -129,16 +161,44 @@ export default function ApprovalsPage() {
                     <button onClick={() => setViewGoal(goal)} className="btn btn-secondary btn-sm btn-icon" title="View details"><Eye size={14} /></button>
                     {goal.status === 'pending' && (
                       <>
-                        <button onClick={() => { setRejectModal(goal); setRejectReason(''); }} className="btn btn-danger btn-sm px-3">
+                        <button onClick={() => { setRejectingId(goal.id); setRejectReason(''); }} className="btn btn-secondary btn-sm px-3">
                           <X size={13} /> <span className="hide-mobile">Reject</span>
                         </button>
-                        <button onClick={() => { setApproveModal(goal); setApproveComment(''); }} className="btn btn-success btn-sm px-3">
+                        <button onClick={() => handleApprove(goal)} className="btn btn-primary btn-sm px-3">
                           <Check size={13} /> <span className="hide-mobile">Approve</span>
                         </button>
                       </>
                     )}
                   </div>
                 </div>
+
+                {/* Reject Slide-in */}
+                {rejectingId === goal.id && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex gap-3 items-start">
+                    <MessageSquare size={16} className="text-[var(--color-danger-400)] mt-2" />
+                    <div className="flex-1">
+                      <input type="text" className="input w-full" placeholder="Reason for rejection (required)..." value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} autoFocus />
+                    </div>
+                    <div className="flex gap-2 mt-1">
+                      <button onClick={() => setRejectingId(null)} className="btn btn-secondary btn-sm">Cancel</button>
+                      <button onClick={() => handleReject(goal)} className="btn btn-danger btn-sm" disabled={!rejectReason.trim()}>Confirm Rejection</button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Status Details for Approved/Rejected */}
+                {goal.status === 'approved' && getApprovalDetails(goal.id) && (
+                  <div className="mt-2 pt-3 border-t border-[var(--color-dark-700)] flex items-center gap-2 text-[11px] text-[var(--color-dark-300)]">
+                    <Check size={12} className="text-[var(--color-success-400)]" />
+                    <span>Approved by <strong>{getApprovalDetails(goal.id).approver}</strong> on {formatDateTime(getApprovalDetails(goal.id).time)}</span>
+                  </div>
+                )}
+                {goal.status === 'rejected' && getRejectionDetails(goal.id) && (
+                  <div className="mt-2 pt-3 border-t border-[var(--color-dark-700)] flex items-center gap-2 text-[11px] text-[var(--color-danger-400)]">
+                    <X size={12} />
+                    <span><strong>Reason:</strong> {getRejectionDetails(goal.id).reason} ({formatDateTime(getRejectionDetails(goal.id).time)})</span>
+                  </div>
+                )}
               </motion.div>
             );
           })}
@@ -195,45 +255,6 @@ export default function ApprovalsPage() {
             )}
           </div>
         )}
-      </Modal>
-
-      {/* Approve Confirmation Modal */}
-      <Modal isOpen={!!approveModal} onClose={() => setApproveModal(null)} title="Approve Goal" size="sm">
-        <div className="space-y-4">
-          <div className="bg-[var(--color-dark-900)] p-4 rounded-xl border border-[var(--color-dark-700)]">
-            <p className="text-[12px] text-[var(--color-dark-200)] leading-relaxed">
-              You are approving <span className="text-[var(--color-dark-50)] font-semibold">{approveModal?.title}</span>. 
-              This will lock the goal and make it active for the employee.
-            </p>
-          </div>
-          <div>
-            <label className="label">Add a comment (Optional)</label>
-            <textarea className="input" rows={3} value={approveComment} onChange={(e) => setApproveComment(e.target.value)} placeholder="E.g., Great goal, let's focus on Q1..." />
-          </div>
-          <div className="flex justify-end gap-2 pt-2">
-            <button onClick={() => setApproveModal(null)} className="btn btn-secondary">Cancel</button>
-            <button onClick={handleApprove} className="btn btn-success"><Check size={14} /> Approve & Lock</button>
-          </div>
-        </div>
-      </Modal>
-
-      {/* Reject Modal */}
-      <Modal isOpen={!!rejectModal} onClose={() => setRejectModal(null)} title="Reject Goal" size="sm">
-        <div className="space-y-4">
-          <div className="bg-red-500/10 p-4 rounded-xl border border-red-500/20">
-            <p className="text-[12px] text-[var(--color-danger-400)] leading-relaxed">
-              You are returning <span className="font-semibold">{rejectModal?.title}</span> for revision. The employee will be able to edit and resubmit.
-            </p>
-          </div>
-          <div>
-            <label className="label">Reason for Rejection *</label>
-            <textarea className="input" rows={3} value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} placeholder="Explain why this goal needs revision..." />
-          </div>
-          <div className="flex justify-end gap-2 pt-2">
-            <button onClick={() => setRejectModal(null)} className="btn btn-secondary">Cancel</button>
-            <button onClick={handleReject} className="btn btn-danger" disabled={!rejectReason.trim()}><X size={14} /> Reject Goal</button>
-          </div>
-        </div>
       </Modal>
     </motion.div>
   );

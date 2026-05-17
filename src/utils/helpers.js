@@ -113,21 +113,20 @@ export function timeAgo(dateStr) {
 }
 
 export function getProgressColor(progress) {
-  if (progress >= 80) return '#34d399';
-  if (progress >= 50) return '#2B7FD4';
-  if (progress >= 25) return '#3B9AE8';
-  return '#f87171';
+  if (progress >= 70) return '#10b981';
+  if (progress >= 35) return '#f59e0b';
+  return '#ef4444';
 }
 
 export function getStatusConfig(status) {
   const map = {
-    draft: { label: 'Draft', color: '#5c5c78', bg: 'rgba(92,92,120,0.1)' },
-    pending: { label: 'Pending', color: '#fbbf24', bg: 'rgba(251,191,36,0.08)' },
-    approved: { label: 'Approved', color: '#34d399', bg: 'rgba(52,211,153,0.08)' },
-    rejected: { label: 'Rejected', color: '#f87171', bg: 'rgba(248,113,113,0.08)' },
-    in_progress: { label: 'In Progress', color: '#2B7FD4', bg: 'rgba(43,127,212,0.08)' },
-    completed: { label: 'Completed', color: '#22d3ee', bg: 'rgba(34,211,238,0.08)' },
-    on_hold: { label: 'On Hold', color: '#a78bfa', bg: 'rgba(167,139,250,0.08)' },
+    draft: { label: 'Draft', color: '#64748b', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)' },
+    pending: { label: 'Pending', color: '#818cf8', bg: 'rgba(99,102,241,0.1)', border: 'rgba(99,102,241,0.2)' },
+    approved: { label: 'Approved', color: '#34d399', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.2)' },
+    rejected: { label: 'Rejected', color: '#f87171', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.2)' },
+    in_progress: { label: 'In Progress', color: '#818cf8', bg: 'rgba(99,102,241,0.1)', border: 'rgba(99,102,241,0.2)' },
+    completed: { label: 'Completed', color: '#34d399', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.2)' },
+    on_hold: { label: 'On Hold', color: '#fbbf24', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.2)' },
   };
   return map[status] || map.draft;
 }

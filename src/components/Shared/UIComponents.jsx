@@ -5,13 +5,17 @@ import { getStatusConfig, getProgressColor } from '../../utils/helpers';
 // ── Status Badge — clean pill ──
 export function StatusBadge({ status, size = 'sm' }) {
   const config = getStatusConfig(status);
-  const sizeClass = size === 'lg' ? 'px-3 py-1.5 text-[12px]' : 'px-2 py-0.5 text-[11px]';
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-md font-medium tracking-wide ${sizeClass}`}
-      style={{ background: config.bg, color: config.color }}
+      className="inline-flex items-center justify-center rounded-[12px] uppercase font-[600] tracking-[0.05em]"
+      style={{
+        background: config.bg || 'transparent',
+        border: `1px solid ${config.border || config.color}`,
+        color: config.color,
+        padding: '2px 8px',
+        fontSize: '10px',
+      }}
     >
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: config.color }} />
       {config.label}
     </span>
   );
@@ -19,17 +23,16 @@ export function StatusBadge({ status, size = 'sm' }) {
 
 // ── Progress Bar — clean, flat ──
 export function ProgressBar({ value = 0, size = 'sm', showLabel = true, className = '' }) {
-  const h = size === 'lg' ? 'h-2.5' : size === 'md' ? 'h-2' : 'h-1.5';
   const color = getProgressColor(value);
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <div className={`flex-1 ${h} rounded-full overflow-hidden`} style={{ background: 'var(--color-dark-700)' }}>
+      <div className={`flex-1 h-[6px] rounded-full overflow-hidden`} style={{ background: 'rgba(255,255,255,0.04)' }}>
         <motion.div
-          className={`${h} rounded-full`}
+          className="h-full rounded-full"
           style={{ background: color }}
           initial={{ width: 0 }}
           animate={{ width: `${Math.min(value, 100)}%` }}
-          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
         />
       </div>
       {showLabel && (
@@ -69,13 +72,11 @@ export function Avatar({ name, size = 'md', className = '' }) {
 }
 
 // ── Card — clean elevated surface ──
-export function Card({ children, className = '', hover = true, onClick, padding = 'p-5' }) {
+export function Card({ children, className = '', hover = true, onClick, padding = 'p-[24px]' }) {
   return (
     <motion.div
-      className={`surface-raised ${padding} ${hover ? 'cursor-pointer' : ''} ${className}`}
+      className={`bg-[#0d1117] border border-[rgba(255,255,255,0.06)] rounded-[10px] ${padding} ${hover ? 'cursor-pointer hover:border-[rgba(255,255,255,0.1)] transition-colors duration-200' : ''} ${className}`}
       onClick={onClick}
-      whileHover={hover ? { y: -1 } : {}}
-      transition={{ duration: 0.2 }}
     >
       {children}
     </motion.div>
@@ -85,41 +86,34 @@ export function Card({ children, className = '', hover = true, onClick, padding 
 // ── Stat Card — enterprise KPI with larger numbers ──
 export function StatCard({ title, value, subtitle, icon: Icon, trend, color = 'var(--color-accent-600)' }) {
   return (
-    <Card hover={false} className="relative overflow-hidden">
-      <div className="relative z-10">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-[12px] font-medium text-[var(--color-dark-300)]">
+    <div className="flex-1 h-[96px] bg-[#0d1117] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.1)] transition-colors duration-200 rounded-[10px] relative overflow-hidden flex flex-col justify-center px-[24px] py-[20px]">
+      <div className="absolute left-0 top-0 bottom-0 w-[3px]" style={{ backgroundColor: color }} />
+      <div className="flex items-start justify-between w-full relative z-10">
+        <div className="flex flex-col">
+          <div className="text-[11px] uppercase text-[#64748b] tracking-wider font-semibold mb-1">
             {title}
           </div>
-          <div
-            className="w-7 h-7 rounded-md flex items-center justify-center"
-            style={{ background: `color-mix(in srgb, ${color} 15%, transparent)` }}
-          >
-            {Icon && <Icon size={14} style={{ color }} />}
-          </div>
-        </div>
-        <div className="flex items-end justify-between">
-          <div
-            className="text-2xl font-bold text-[var(--color-dark-50)] tracking-tight"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
+          <div className="text-[28px] font-bold text-[#f1f5f9] leading-none animate-count" style={{ fontFamily: 'var(--font-display)' }}>
             {value}
           </div>
+          {subtitle && (
+            <div className="text-[11px] text-[#334155] mt-1 font-medium">{subtitle}</div>
+          )}
+        </div>
+        <div className="flex flex-col items-end justify-between h-full">
+          {Icon && <Icon size={20} style={{ color, opacity: 0.8 }} className="mb-2" />}
           {trend && (
             <span
-              className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-md ${
-                trend > 0 ? 'text-emerald-400 bg-emerald-400/10' : 'text-red-400 bg-red-400/10'
+              className={`text-[11px] font-semibold px-2 py-0.5 rounded-full mt-auto ${
+                trend > 0 ? 'text-[#10b981] bg-[rgba(16,185,129,0.1)]' : 'text-[#ef4444] bg-[rgba(239,68,68,0.1)]'
               }`}
             >
-              {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
+              {trend > 0 ? '↑' : '↓'}{Math.abs(trend)}%
             </span>
           )}
         </div>
-        {subtitle && (
-          <div className="text-[11px] text-[var(--color-dark-400)] mt-2">{subtitle}</div>
-        )}
       </div>
-    </Card>
+    </div>
   );
 }
 

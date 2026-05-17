@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { StatusBadge, ProgressBar, PriorityBadge, Card, Modal, EmptyState } from '../components/Shared/UIComponents';
-import { Target, Plus, Edit3, Trash2, Send, Search, Eye, Lock, AlertCircle, Download, Sparkles, X, Check } from 'lucide-react';
+import { Target, Plus, Edit3, Trash2, Send, Search, Eye, Lock, Unlock, AlertCircle, Download, Sparkles, X, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { GOAL_CATEGORIES, GOAL_TYPES, PRIORITY_LEVELS } from '../data/mockData';
 import { validateGoal, getWeightageSummary, formatDate, isGoalLocked } from '../utils/helpers';
@@ -63,6 +63,9 @@ export default function GoalsPage() {
     if (search) list = list.filter((g) => g.title.toLowerCase().includes(search.toLowerCase()));
     return list;
   }, [myGoals, filterStatus, search]);
+
+  const [updateGoalData, setUpdateGoalData] = useState(null);
+  const [unlockGoalData, setUnlockGoalData] = useState(null);
 
   const ws = getWeightageSummary(myGoals);
 
@@ -142,19 +145,39 @@ export default function GoalsPage() {
       ) : (
         <motion.div variants={item} className="space-y-3">
           {filtered.map((goal) => (
-            <GoalRow key={goal.id} goal={goal} onEdit={openEdit} onView={setViewGoal} onDelete={deleteGoal} onSubmit={submitGoal} onProgress={updateProgress} users={users} isAdmin={isAdmin} />
+            <GoalRow key={goal.id} goal={goal} onEdit={openEdit} onView={setViewGoal} onDelete={deleteGoal} onSubmit={submitGoal} onUpdateProgress={() => setUpdateGoalData(goal)} onUnlock={() => setUnlockGoalData(goal)} users={users} isAdmin={isAdmin} />
           ))}
+        </motion.div>
+      )}
+
+      {/* Weightage Summary Bar (My Goals Bottom) */}
+      {!isAdmin && (
+        <motion.div variants={item} className="mt-8 p-5 rounded-2xl bg-[var(--color-dark-900)] border border-[var(--color-dark-700)]">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[13px] font-bold text-[var(--color-dark-50)]">Weightage Summary</span>
+            <span className="text-[12px] text-[var(--color-dark-300)]">
+              {ws.total === 100 ? '100/100 Weightage used' : `${ws.total}/100 Weightage used — ${ws.remaining}% remaining`}
+            </span>
+          </div>
+          <div className="h-2.5 rounded-full bg-[var(--color-dark-800)] overflow-hidden">
+            <div className="h-full rounded-full bg-teal-500 transition-all duration-500" style={{ width: `${ws.total}%` }} />
+          </div>
         </motion.div>
       )}
 
       {/* Modals */}
       <GoalFormModal isOpen={modalOpen} onClose={() => setModalOpen(false)} editGoal={editGoal} myGoals={myGoals} userId={currentUser.id} cycleId={activeCycle?.id} onCreate={createGoal} onUpdate={updateGoal} />
       <GoalViewModal goal={viewGoal} onClose={() => setViewGoal(null)} users={users} />
+      <UpdateProgressModal goal={updateGoalData} onClose={() => setUpdateGoalData(null)} onSave={(id, data) => { updateGoal(id, data); updateProgress(id, data.progress); }} />
+      <GoalUnlockModal goal={unlockGoalData} onClose={() => setUnlockGoalData(null)} onUnlock={(id, reason) => {
+        updateGoal(id, { status: 'draft' }); // unlocking sets it back to draft or pending? Actually just draft to make it editable
+        toast.success('Goal unlocked successfully', { style: { background: '#0d1117', color: '#fff', border: '1px solid #10b981' } });
+      }} users={users} />
     </motion.div>
   );
 }
 
-function GoalRow({ goal, onEdit, onView, onDelete, onSubmit, onProgress, users, isAdmin }) {
+function GoalRow({ goal, onEdit, onView, onDelete, onSubmit, onUpdateProgress, onUnlock, users, isAdmin }) {
   const isDraft = goal.status === 'draft';
   const isRejected = goal.status === 'rejected';
   const canEdit = isDraft || isRejected;
@@ -162,7 +185,7 @@ function GoalRow({ goal, onEdit, onView, onDelete, onSubmit, onProgress, users, 
   const owner = users.find((u) => u.id === goal.userId);
 
   return (
-    <motion.div layout className="surface-raised p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center gap-6 hover:border-[var(--color-dark-600)] transition-colors">
+    <motion.div layout className="list-card p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center gap-6">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 mb-2 flex-wrap">
           <button onClick={() => onView(goal)} className="text-[14px] font-semibold text-[var(--color-dark-50)] hover:text-[var(--color-accent-400)] transition-colors text-left truncate" style={{ fontFamily: 'var(--font-display)' }}>
@@ -195,11 +218,17 @@ function GoalRow({ goal, onEdit, onView, onDelete, onSubmit, onProgress, users, 
         
         <div className="flex items-center gap-2 self-end sm:self-auto">
           {goal.status === 'approved' && !isAdmin ? (
-            <ProgressSlider goal={goal} onProgress={onProgress} />
+            <button onClick={onUpdateProgress} className="btn btn-secondary btn-sm">Update</button>
           ) : (
             <button onClick={() => onView(goal)} className="btn btn-secondary btn-sm">View</button>
           )}
           
+          {isAdmin && locked && (
+            <button onClick={onUnlock} className="btn btn-sm border border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white bg-transparent flex items-center gap-1.5 px-3">
+              <Unlock size={13} /> Unlock
+            </button>
+          )}
+
           {canEdit && !isAdmin && (
             <>
               <button onClick={() => onEdit(goal)} className="btn btn-secondary btn-sm btn-icon" title="Edit"><Edit3 size={14} /></button>
@@ -213,19 +242,131 @@ function GoalRow({ goal, onEdit, onView, onDelete, onSubmit, onProgress, users, 
   );
 }
 
-function ProgressSlider({ goal, onProgress }) {
-  const [val, setVal] = useState(goal.progress);
-  const [editing, setEditing] = useState(false);
-  
-  if (!editing) return <button onClick={() => setEditing(true)} className="btn btn-secondary btn-sm">Update</button>;
-  
+function UpdateProgressModal({ goal, onClose, onSave }) {
+  const [actual, setActual] = useState('');
+  const [status, setStatus] = useState('in_progress');
+  const [notes, setNotes] = useState('');
+
+  React.useEffect(() => {
+    if (goal) {
+      setActual(goal.actualValue || '');
+      setStatus(goal.status === 'completed' ? 'completed' : 'in_progress');
+      setNotes('');
+    }
+  }, [goal]);
+
+  if (!goal) return null;
+
+  let score = 0;
+  if (goal.uom === 'Zero-based') {
+    score = Number(actual) === 0 && actual !== '' ? 100 : 0;
+  } else if (goal.uom === 'Timeline') {
+    if (status === 'completed') {
+      score = 100;
+    } else {
+      const today = new Date().getTime();
+      const end = new Date(goal.dueDate).getTime();
+      const start = new Date(goal.createdAt).getTime();
+      score = Math.max(0, Math.min(100, Math.round(((today - start) / (end - start)) * 100)));
+    }
+  } else {
+    const target = Number(goal.targetValue) || 1;
+    const ach = Number(actual) || 0;
+    score = Math.max(0, Math.min(100, Math.round((ach / target) * 100)));
+  }
+
+  const scoreColor = score > 60 ? 'text-[var(--color-success-400)]' : score >= 35 ? 'text-[var(--color-warning-400)]' : 'text-[var(--color-danger-400)]';
+
+  const handleSave = () => {
+    if (Number(actual) < 0) {
+      toast.error('Actual achievement cannot be negative', { style: { background: '#0d1117', color: '#fff', border: '1px solid #ef4444' } });
+      return;
+    }
+    onSave(goal.id, { 
+      progress: score, 
+      actualValue: Number(actual), 
+      status, 
+      quarterlyUpdates: [...(goal.quarterlyUpdates||[]), { quarter: 'Update', note: notes, date: new Date().toISOString() }] 
+    });
+    toast.success('Progress Updated', { style: { background: '#0d1117', color: '#fff', border: '1px solid #10b981' } });
+    onClose();
+  };
+
   return (
-    <div className="flex items-center gap-3 bg-[var(--color-dark-900)] px-2 py-1.5 rounded-lg border border-[var(--color-dark-700)]">
-      <input type="range" min={0} max={100} value={val} onChange={(e) => setVal(Number(e.target.value))} className="w-24 h-1 bg-[var(--color-dark-700)] rounded-full appearance-none cursor-pointer" style={{ accentColor: 'var(--color-accent-500)' }} />
-      <span className="text-[11px] text-[var(--color-dark-50)] font-bold w-6 text-right">{val}%</span>
-      <button onClick={() => { onProgress(goal.id, val); setEditing(false); }} className="px-2 py-1 bg-[var(--color-accent-600)] hover:bg-[var(--color-accent-500)] text-white text-[10px] font-semibold rounded-md transition-colors">Save</button>
-      <button onClick={() => setEditing(false)} className="px-2 py-1 text-[var(--color-dark-400)] hover:text-[var(--color-dark-50)] transition-colors text-[10px]">✕</button>
-    </div>
+    <Modal isOpen={!!goal} onClose={onClose} title="Update Progress" size="md">
+      <div className="space-y-4">
+        <div className="bg-[var(--color-dark-900)] p-4 rounded-xl border border-[var(--color-dark-700)] grid grid-cols-2 gap-3 text-[12px]">
+          <div><span className="text-[var(--color-dark-400)]">Goal:</span> <span className="text-[var(--color-dark-50)] font-semibold block truncate" title={goal.title}>{goal.title}</span></div>
+          <div><span className="text-[var(--color-dark-400)]">Thrust Area:</span> <span className="text-[var(--color-dark-50)] font-semibold block">{goal.category}</span></div>
+          <div><span className="text-[var(--color-dark-400)]">UoM Type:</span> <span className="text-[var(--color-dark-50)] font-semibold block">{goal.uom || 'Numeric'}</span></div>
+          <div><span className="text-[var(--color-dark-400)]">Planned Target:</span> <span className="text-[var(--color-dark-50)] font-semibold block">{goal.targetValue || '100'}</span></div>
+        </div>
+
+        <div>
+          <label className="label">Actual Achievement *</label>
+          <input type="number" className="input" value={actual} onChange={e => setActual(e.target.value)} placeholder="Enter numeric value..." min={0} />
+        </div>
+
+        <div>
+          <label className="label">Status</label>
+          <select className="input" value={status} onChange={e => setStatus(e.target.value)}>
+            <option value="approved">Not Started</option>
+            <option value="in_progress">On Track</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="label">Notes (Optional)</label>
+          <textarea className="input" rows={2} value={notes} onChange={e => setNotes(e.target.value)} placeholder="Add any update notes..."></textarea>
+        </div>
+
+        <div className="bg-[var(--color-dark-800)] p-4 rounded-xl border border-[var(--color-dark-700)] text-center">
+          <div className="text-[11px] text-[var(--color-dark-400)] uppercase tracking-wider font-semibold mb-1">Computed Score</div>
+          <div className={`text-4xl font-bold font-display ${scoreColor}`}>{score}%</div>
+          <div className="mt-3 w-full h-2 rounded-full bg-[var(--color-dark-900)] overflow-hidden">
+            <div className={`h-full transition-all duration-300 ${score > 60 ? 'bg-[var(--color-success-500)]' : score >= 35 ? 'bg-[var(--color-warning-500)]' : 'bg-[var(--color-danger-500)]'}`} style={{ width: `${score}%` }}></div>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2 border-t border-[var(--color-dark-700)]">
+          <button onClick={onClose} className="btn btn-secondary">Cancel</button>
+          <button onClick={handleSave} className="btn btn-primary" disabled={actual === '' || Number(actual) < 0}>Save Progress</button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function GoalUnlockModal({ goal, onClose, onUnlock, users }) {
+  const [reason, setReason] = useState('');
+  if (!goal) return null;
+  const owner = users.find(u => u.id === goal.userId);
+
+  return (
+    <Modal isOpen={!!goal} onClose={onClose} title="Unlock Goal" size="sm">
+      <div className="space-y-4">
+        <div className="bg-amber-500/10 p-4 rounded-xl border border-amber-500/20">
+          <p className="text-[12px] text-amber-500 leading-relaxed">
+            Unlock this goal for editing? This action will be logged.
+          </p>
+          <div className="mt-2 text-[11px] text-amber-400/80">
+            <strong>Goal:</strong> {goal.title}<br/>
+            <strong>Owner:</strong> {owner?.name || 'Unknown'}
+          </div>
+        </div>
+        <div>
+          <label className="label">Reason for unlock *</label>
+          <textarea className="input" rows={3} value={reason} onChange={e => setReason(e.target.value)} placeholder="Why is this being unlocked?" />
+        </div>
+        <div className="flex justify-end gap-2 pt-2">
+          <button onClick={onClose} className="btn btn-secondary">Cancel</button>
+          <button onClick={() => { onUnlock(goal.id, reason); onClose(); }} className="btn btn-sm bg-amber-500 hover:bg-amber-600 text-white border-none" disabled={!reason.trim()}>
+            <Unlock size={14} className="mr-1" /> Unlock Goal
+          </button>
+        </div>
+      </div>
+    </Modal>
   );
 }
 
@@ -310,8 +451,22 @@ function GoalFormModal({ isOpen, onClose, editGoal, myGoals, userId, cycleId, on
   };
 
   const handleSubmit = () => {
+    let localErrors = {};
+    if (form.weightage < 10) {
+      localErrors.weightage = 'Minimum weightage per goal is 10%';
+    }
+    const projectedTotal = usedWeightage + Number(form.weightage);
+    if (projectedTotal > 100) {
+      localErrors.weightage = `Total weightage cannot exceed 100%. You have ${maxAvailable}% remaining.`;
+    }
+    
+    if (Object.keys(localErrors).length > 0) {
+      setErrors(e => ({ ...e, ...localErrors }));
+      return;
+    }
+
     const { valid, errors: e } = validateGoal({ ...form, id: editGoal?.id }, myGoals);
-    if (!valid) { setErrors(e); return; }
+    if (!valid) { setErrors(prev => ({ ...prev, ...e })); return; }
     if (editGoal) {
       onUpdate(editGoal.id, form);
     } else {
@@ -484,7 +639,10 @@ function GoalFormModal({ isOpen, onClose, editGoal, myGoals, userId, cycleId, on
       </div>
       <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-[var(--color-dark-700)]">
         <button onClick={onClose} className="btn btn-secondary">Cancel</button>
-        <button onClick={handleSubmit} className="w-full sm:w-auto py-2 px-6 rounded-lg font-bold text-[13px] text-white transition-all bg-[var(--color-accent-600)] hover:bg-[var(--color-accent-500)] disabled:opacity-50 disabled:cursor-not-allowed">
+        <button 
+          onClick={handleSubmit} 
+          disabled={isMaxGoalsReached || form.weightage < 10 || (usedWeightage + Number(form.weightage) > 100)}
+          className="w-full sm:w-auto py-2 px-6 rounded-lg font-bold text-[13px] text-white transition-all bg-[var(--color-accent-600)] hover:bg-[var(--color-accent-500)] disabled:opacity-50 disabled:cursor-not-allowed">
           {editGoal ? 'Save Changes' : 'Submit for Approval'}
         </button>
       </div>

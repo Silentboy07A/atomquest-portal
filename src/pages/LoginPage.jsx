@@ -36,32 +36,32 @@ export default function LoginPage({ onLogin }) {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden" style={{ backgroundColor: '#050508', fontFamily: 'var(--font-sans)' }}>
+    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden bg-[var(--color-dark-950)]">
       {/* Animated Mesh Gradient Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full mix-blend-screen filter blur-[100px] opacity-15 animate-blob" style={{ background: '#0d9488', animation: 'blob 15s infinite alternate' }} />
-        <div className="absolute top-[20%] -right-[10%] w-[60vw] h-[60vw] rounded-full mix-blend-screen filter blur-[100px] opacity-15 animate-blob" style={{ background: '#4f46e5', animation: 'blob 20s infinite alternate-reverse', animationDelay: '2s' }} />
+        <div className="absolute -top-[10%] -left-[10%] w-[50vw] h-[50vw] rounded-full mix-blend-screen filter blur-[80px] opacity-[0.12] mesh-blob-1" />
+        <div className="absolute top-[20%] -right-[10%] w-[60vw] h-[60vw] rounded-full mix-blend-screen filter blur-[80px] opacity-[0.12] mesh-blob-2" />
       </div>
 
       {/* Grid Lines Overlay */}
-      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+      <div className="absolute inset-0 pointer-events-none login-grid" />
 
       {/* Floating Card */}
-      <div className="relative w-full max-w-[400px] rounded-2xl p-12 z-10 animate-fade-in-up" style={{
+      <div className="relative w-full max-w-[400px] rounded-[16px] p-[48px] z-10 animate-fade-in-up" style={{
         background: 'rgba(255,255,255,0.03)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         border: '1px solid rgba(255,255,255,0.08)',
-        boxShadow: '0 0 80px rgba(13, 148, 136, 0.15)'
+        boxShadow: '0 0 40px rgba(13,148,136,0.08), 0 25px 50px rgba(0,0,0,0.5)'
       }}>
         
         {/* Branding Header */}
         <div className="flex flex-col items-center mb-[32px]">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #0d9488, #4f46e5)', marginBottom: '8px' }}>
+          <div className="w-[56px] h-[56px] rounded-full flex items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #0d9488, #4f46e5)' }}>
             <span className="text-white font-bold text-2xl tracking-tight">AQ</span>
           </div>
-          <h1 className="text-white font-bold tracking-tight" style={{ fontSize: '28px' }}>AtomQuest</h1>
-          <p className="text-[#8b949e] font-semibold tracking-widest uppercase mt-1" style={{ fontSize: '13px' }}>Performance Portal</p>
+          <h1 className="text-[var(--color-dark-50)] font-bold tracking-tight mt-[16px]" style={{ fontSize: '26px' }}>AtomQuest</h1>
+          <p className="text-[var(--color-dark-300)] font-semibold tracking-[0.15em] uppercase mt-[4px]" style={{ fontSize: '11px' }}>Performance Portal</p>
         </div>
 
         {/* Form */}
@@ -72,10 +72,10 @@ export default function LoginPage({ onLogin }) {
               placeholder="Email address" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[#0d1117] border rounded-lg px-4 h-[52px] text-[15px] text-white placeholder-[#8b949e] outline-none transition-all duration-200"
-              style={{ borderColor: 'rgba(255,255,255,0.1)' }}
-              onFocus={(e) => { e.target.style.borderColor = '#0d9488'; e.target.style.boxShadow = '0 0 10px rgba(13,148,136,0.3)'; }}
-              onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; }}
+              className="w-full bg-[var(--color-dark-800)] border rounded-[8px] px-[16px] py-[12px] text-[13px] text-[var(--color-dark-50)] placeholder-[var(--color-dark-400)] outline-none transition-all duration-200"
+              style={{ borderColor: 'rgba(255,255,255,0.08)' }}
+              onFocus={(e) => { e.target.style.borderColor = '#0d9488'; e.target.style.boxShadow = '0 0 0 3px rgba(13,148,136,0.1)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; e.target.style.boxShadow = 'none'; }}
               required
             />
           </div>
@@ -85,33 +85,31 @@ export default function LoginPage({ onLogin }) {
               placeholder="Password" 
               value={password} 
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-[#0d1117] border rounded-lg pl-4 pr-10 h-[52px] text-[15px] text-white placeholder-[#8b949e] outline-none transition-all duration-200"
-              style={{ borderColor: 'rgba(255,255,255,0.1)' }}
-              onFocus={(e) => { e.target.style.borderColor = '#0d9488'; e.target.style.boxShadow = '0 0 10px rgba(13,148,136,0.3)'; }}
-              onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; }}
+              className="w-full bg-[var(--color-dark-800)] border rounded-[8px] px-[16px] py-[12px] pr-10 text-[13px] text-[var(--color-dark-50)] placeholder-[var(--color-dark-400)] outline-none transition-all duration-200"
+              style={{ borderColor: 'rgba(255,255,255,0.08)' }}
+              onFocus={(e) => { e.target.style.borderColor = '#0d9488'; e.target.style.boxShadow = '0 0 0 3px rgba(13,148,136,0.1)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; e.target.style.boxShadow = 'none'; }}
               required
             />
             <button 
               type="button" 
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b949e] hover:text-white transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-dark-300)] hover:text-[var(--color-dark-50)] transition-colors"
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
           
           <div className="flex justify-end mt-[-8px]">
-            <a href="#" className="text-[#8b949e] text-xs hover:text-white transition-colors">Forgot password?</a>
+            <a href="#" className="text-[12px] text-[var(--color-dark-300)] hover:text-[var(--color-accent-600)] transition-colors">Forgot password?</a>
           </div>
 
           <button 
             type="submit" 
             disabled={isLoading}
-            className="group relative w-full py-3 rounded-lg text-[14px] font-[600] text-white shadow-lg overflow-hidden disabled:opacity-70 mt-2"
-            style={{ background: 'linear-gradient(to right, #0d9488, #4f46e5)' }}
+            className="group relative w-full py-[12px] rounded-[8px] text-[14px] font-[600] text-white shadow-lg overflow-hidden disabled:opacity-70 mt-2 hover:brightness-110 transition-all duration-150 animate-shimmer"
+            style={{ background: 'linear-gradient(135deg, #0d9488, #4f46e5)' }}
           >
-            {/* Shimmer effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover:animate-shimmer" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }} />
             <div className="relative flex items-center justify-center gap-2">
               {isLoading ? <Loader2 size={16} className="animate-spin" /> : 'Sign In'}
             </div>
@@ -119,10 +117,10 @@ export default function LoginPage({ onLogin }) {
         </form>
 
         {/* Divider */}
-        <div className="flex items-center gap-4" style={{ marginTop: '32px', marginBottom: '32px' }}>
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-[#8b949e] text-xs font-medium">— or jump in as —</span>
-          <div className="flex-1 h-px bg-white/10" />
+        <div className="flex items-center gap-4 my-[28px] text-[12px] text-[var(--color-dark-400)]">
+          <div className="flex-1 h-px bg-[rgba(255,255,255,0.06)]" />
+          <span>— or jump in as —</span>
+          <div className="flex-1 h-px bg-[rgba(255,255,255,0.06)]" />
         </div>
 
         {/* Role Buttons */}
@@ -135,7 +133,7 @@ export default function LoginPage({ onLogin }) {
             <button 
               key={role.label}
               onClick={() => autoFillAndLogin(role.email, role.pass)}
-              className="flex-1 py-3 flex items-center justify-center text-[12px] font-semibold text-[#8b949e] bg-[#0d1117] border border-white/5 rounded-lg hover:border-[#0d9488] hover:text-[#0d9488] transition-all duration-200 hover:scale-[1.02]"
+              className="flex-1 py-[10px] flex items-center justify-center text-[13px] font-medium text-[var(--color-dark-300)] bg-transparent border border-[rgba(255,255,255,0.08)] rounded-[6px] hover:border-[var(--color-accent-600)] hover:text-[var(--color-dark-50)] transition-all duration-150 hover:scale-[1.02]"
             >
               {role.label}
             </button>
@@ -145,31 +143,19 @@ export default function LoginPage({ onLogin }) {
 
       {/* Footer */}
       <div className="absolute bottom-6 text-center z-10">
-        <span className="text-[11px] text-[#8b949e] tracking-wide">AtomQuest Hackathon 1.0 · Alliance University</span>
+        <span className="text-[11px] text-[var(--color-dark-400)] tracking-wide">AtomQuest Hackathon 1.0 · Alliance University</span>
       </div>
 
-      {/* CSS Animations */}
       <style>{`
-        @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
         @keyframes fade-in-up {
           0% { opacity: 0; transform: translateY(20px); }
           100% { opacity: 1; transform: translateY(0); }
         }
-        @keyframes shimmer {
-          100% { transform: translateX(100%); }
-        }
         .animate-fade-in-up {
-          animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .animate-shimmer {
-          animation: shimmer 1.5s infinite;
+          animation: fade-in-up 0.4s ease-out forwards;
         }
       `}</style>
     </div>
+  );
   );
 }

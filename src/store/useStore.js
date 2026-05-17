@@ -44,14 +44,32 @@ export const useStore = create((set, get) => ({
   updateGoal: (goalId, updates) => {
     const old = get().goals.find((g) => g.id === goalId);
     if (!old) return;
-    set((s) => ({
-      goals: s.goals.map((g) => (g.id === goalId ? { ...g, ...updates, updatedAt: new Date().toISOString() } : g)),
-    }));
+    
+    const matchingGoals = get().goals.filter(g => g.title === old.title && g.id !== goalId);
+    
+    set((s) => {
+      let newGoals = s.goals.map((g) => (g.id === goalId ? { ...g, ...updates, updatedAt: new Date().toISOString() } : g));
+      if (matchingGoals.length > 0 && (updates.progress !== undefined || updates.actualValue !== undefined)) {
+        newGoals = newGoals.map(g => g.title === old.title && g.id !== goalId ? { 
+          ...g, 
+          progress: updates.progress ?? g.progress, 
+          actualValue: updates.actualValue ?? g.actualValue, 
+          status: updates.status ?? g.status, 
+          updatedAt: new Date().toISOString() 
+        } : g);
+      }
+      return { goals: newGoals };
+    });
+    
     Object.keys(updates).forEach((field) => {
       if (old[field] !== updates[field]) {
         addAuditEntry(set, get, 'goal_updated', 'goal', goalId, get().currentUser.id, `Updated ${field} on "${old.title}"`, { field, from: old[field], to: updates[field] });
       }
     });
+
+    if (matchingGoals.length > 0 && (updates.progress !== undefined || updates.actualValue !== undefined)) {
+      addAuditEntry(set, get, 'shared_goal_synced', 'goal', goalId, get().currentUser.id, `Shared progress synced across ${matchingGoals.length + 1} employees for "${old.title}"`);
+    }
   },
 
   deleteGoal: (goalId) => {
@@ -97,10 +115,22 @@ export const useStore = create((set, get) => ({
     const goal = get().goals.find((g) => g.id === goalId);
     if (!goal) return;
     const oldProgress = goal.progress;
-    set((s) => ({
-      goals: s.goals.map((g) => (g.id === goalId ? { ...g, progress, updatedAt: new Date().toISOString() } : g)),
-    }));
+    
+    const matchingGoals = get().goals.filter(g => g.title === goal.title && g.id !== goalId);
+
+    set((s) => {
+      let newGoals = s.goals.map((g) => (g.id === goalId ? { ...g, progress, updatedAt: new Date().toISOString() } : g));
+      if (matchingGoals.length > 0) {
+        newGoals = newGoals.map(g => g.title === goal.title && g.id !== goalId ? { ...g, progress, updatedAt: new Date().toISOString() } : g);
+      }
+      return { goals: newGoals };
+    });
+    
     addAuditEntry(set, get, 'progress_updated', 'goal', goalId, get().currentUser.id, `Progress updated from ${oldProgress}% to ${progress}%`, { field: 'progress', from: oldProgress, to: progress });
+    
+    if (matchingGoals.length > 0) {
+      addAuditEntry(set, get, 'shared_goal_synced', 'goal', goalId, get().currentUser.id, `Shared progress synced across ${matchingGoals.length + 1} employees for "${goal.title}"`);
+    }
   },
 
   // ── Cycles ──
@@ -112,6 +142,9 @@ export const useStore = create((set, get) => ({
 
   // ── Audit ──
   auditLogs: INITIAL_AUDIT_LOGS,
+  logAction: ({ action, details, timestamp, userId, targetUserId }) => {
+    addAuditEntry(set, get, action.toLowerCase().replace(/[- ]/g, '_'), 'user', targetUserId || userId, userId, details);
+  },
 
   // ── Notifications ──
   notifications: INITIAL_NOTIFICATIONS,

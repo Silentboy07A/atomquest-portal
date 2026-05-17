@@ -5,6 +5,7 @@ import { Target, TrendingUp, CheckCircle, AlertTriangle, ArrowRight, Clock, Acti
 import { getWeightageSummary, timeAgo } from '../utils/helpers';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+import { CompletionDashboard } from '../components/CompletionDashboard';
 
 const DONUT_COLORS = [
   'var(--color-accent-600)',
@@ -331,6 +332,9 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* ═══ ADMIN: Completion Dashboard ═══ */}
+      {isAdmin && <CompletionDashboard />}
     </div>
   );
 }

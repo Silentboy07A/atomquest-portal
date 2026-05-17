@@ -5,6 +5,7 @@ import { Avatar, ProgressBar, StatusBadge, Card, EmptyState } from '../component
 import { Users, Search, ChevronRight, Target, Sparkles, Bot, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getWeightageSummary, getProgressColor } from '../utils/helpers';
+import { CheckInDrawer } from '../components/CheckInDrawer';
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } } };
@@ -16,6 +17,7 @@ export default function TeamPage() {
   const isManager = currentUser.role === 'manager';
   const [search, setSearch] = useState('');
   const [expandedUser, setExpandedUser] = useState(null);
+  const [checkInUser, setCheckInUser] = useState(null);
 
   const teamMembers = useMemo(() => {
     let members;
@@ -98,7 +100,7 @@ export default function TeamPage() {
               <motion.div 
                 key={member.id} 
                 layout 
-                className="surface-raised overflow-hidden transition-colors hover:border-[var(--color-dark-600)]"
+                className="list-card p-0 overflow-hidden"
               >
                 <button
                   onClick={() => setExpandedUser(isExpanded ? null : member.id)}
@@ -160,6 +162,13 @@ export default function TeamPage() {
                       ))}
                     </div>
                     {(isAdmin || isManager) && (
+                      <div className="px-5 pt-4 pb-2 bg-[var(--color-dark-900)] border-t border-[var(--color-dark-700)]">
+                        <button onClick={() => setCheckInUser(member)} className="w-full py-2.5 rounded-lg border border-[var(--color-dark-600)] text-[var(--color-dark-100)] hover:bg-[var(--color-dark-800)] transition-colors flex items-center justify-center gap-2 text-[13px] font-semibold">
+                          <Target size={14} /> Start 1:1 Manager Check-in
+                        </button>
+                      </div>
+                    )}
+                    {(isAdmin || isManager) && (
                       <AIReviewGenerator member={member} goals={memberGoals} avgProg={avg} />
                     )}
                   </motion.div>
@@ -169,6 +178,8 @@ export default function TeamPage() {
           })}
         </motion.div>
       )}
+
+      <CheckInDrawer isOpen={!!checkInUser} onClose={() => setCheckInUser(null)} user={checkInUser} />
     </motion.div>
   );
 }
