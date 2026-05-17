@@ -77,7 +77,7 @@ export default function DashboardPage() {
   const ws = getWeightageSummary(myGoals);
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-5">
+    <div className="max-w-[1200px] mx-auto space-y-6">
       {/* ═══ HEADER ═══ */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <div>
@@ -110,16 +110,16 @@ export default function DashboardPage() {
       </div>
 
       {/* ═══ CHARTS — 60/40 ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Progress Trend */}
-        <div className="lg:col-span-3 surface-raised p-5 flex flex-col">
+        <div className="lg:col-span-3 surface-raised p-[24px] flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <h3 className="section-header">Progress Trend</h3>
             <span className="section-meta">Jan – May {new Date().getFullYear()}</span>
           </div>
-          <div className="flex-1 min-h-[180px]">
+          <div className="flex-1 h-[180px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={progressTrend} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
+              <AreaChart data={progressTrend} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
                 <defs>
                   <linearGradient id="progressGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-accent-600)" stopOpacity={0.15} />
@@ -136,21 +136,21 @@ export default function DashboardPage() {
         </div>
 
         {/* Goal Distribution */}
-        <div className="lg:col-span-2 surface-raised p-5 flex flex-col">
+        <div className="lg:col-span-2 surface-raised p-[24px] flex flex-col">
           <h3 className="section-header mb-3">Goal Distribution</h3>
           <div className="flex-1 flex flex-col items-center justify-center">
             <ResponsiveContainer width="100%" height={130}>
               <PieChart>
-                <Pie data={categoryData} cx="50%" cy="50%" innerRadius={38} outerRadius={55} dataKey="value" paddingAngle={2} strokeWidth={0}>
+                <Pie data={categoryData} cx="50%" cy="50%" innerRadius={28} outerRadius={41} dataKey="value" paddingAngle={2} strokeWidth={0}>
                   {categoryData.map((_, i) => (<Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />))}
                 </Pie>
                 <Tooltip contentStyle={chartTooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
-            <div className="w-full space-y-1.5 mt-4">
+            <div className="w-full flex flex-col gap-[8px] mt-4">
               {categoryData.map((d, i) => (
-                <div key={d.name} className="flex items-center justify-between text-[11px]">
-                  <div className="flex items-center gap-2 text-[var(--color-dark-200)]">
+                <div key={d.name} className="flex items-center justify-between text-[13px]">
+                  <div className="flex items-center gap-[8px] text-[var(--color-dark-100)]">
                     <span className="w-2 h-2 rounded-sm" style={{ background: DONUT_COLORS[i % DONUT_COLORS.length] }} />
                     <span className="truncate">{d.name}</span>
                   </div>
@@ -163,65 +163,60 @@ export default function DashboardPage() {
       </div>
 
       {/* ═══ BOTTOM — Goals Table + Activity ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Recent Goals — table layout */}
-        <div className="lg:col-span-2 surface-raised overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-0">
+        {/* Recent Goals */}
+        <div className="surface-raised overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3.5" style={{ borderBottom: '1px solid var(--color-dark-700)' }}>
             <h3 className="section-header">Recent Goals</h3>
             <button onClick={() => navigate('/goals')} className="text-[11px] text-[var(--color-dark-300)] hover:text-[var(--color-dark-50)] flex items-center gap-1 transition-colors font-medium">
               View all <ArrowRight size={12} />
             </button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Goal</th>
-                  <th>Category</th>
-                  <th>Status</th>
-                  <th>Progress</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(isManager ? teamGoals : myGoals).slice(0, 5).map((goal) => (
-                  <tr key={goal.id}>
-                    <td>
-                      <div className="text-[12px] font-medium text-[var(--color-dark-50)] truncate max-w-[200px]">{goal.title}</div>
-                      {isManager && (
-                        <div className="text-[10px] text-[var(--color-dark-400)] mt-0.5">
-                          {users.find((u) => u.id === goal.userId)?.name}
-                        </div>
-                      )}
-                    </td>
-                    <td>
-                      <span className="badge badge-subtle">{goal.category}</span>
-                    </td>
-                    <td><StatusBadge status={goal.status} /></td>
-                    <td className="w-32"><ProgressBar value={goal.progress} size="sm" /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex flex-col">
+            {(isManager ? teamGoals : myGoals).slice(0, 5).map((goal) => (
+              <div key={goal.id} className="flex items-center justify-between min-h-[64px]" style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[14px] font-semibold text-[var(--color-dark-50)]">{goal.title}</span>
+                    <span className="badge badge-subtle">{goal.category}</span>
+                    <StatusBadge status={goal.status} />
+                  </div>
+                  {isManager && (
+                    <div className="text-[11px] text-[var(--color-dark-400)]">
+                      {users.find((u) => u.id === goal.userId)?.name}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-[100px]">
+                    <ProgressBar value={goal.progress} size="sm" showLabel={false} />
+                  </div>
+                  <span className="text-[13px] font-bold text-[var(--color-dark-50)] w-[36px] text-right">{goal.progress}%</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Activity Timeline */}
-        <div className="surface-raised overflow-hidden flex flex-col">
-          <div className="px-5 py-3.5 shrink-0" style={{ borderBottom: '1px solid var(--color-dark-700)' }}>
+        <div className="flex flex-col pl-8">
+          <div className="py-3.5 shrink-0" style={{ borderBottom: '1px solid var(--color-dark-700)' }}>
             <h3 className="section-header">Activity</h3>
           </div>
-          <div className="p-4 space-y-0 flex-1 overflow-y-auto">
-            {recentNotifs.map((n, idx) => (
-              <div key={n.id} className="flex gap-3 py-2.5 relative">
-                {idx < recentNotifs.length - 1 && (
-                  <div className="absolute left-[9px] top-[30px] w-px h-[calc(100%-12px)] bg-[var(--color-dark-700)]" />
-                )}
+          <div className="flex-1 overflow-y-auto mt-2">
+            {[
+              { id: 'm1', message: 'Arjun Mehta updated progress on Migrate API to GraphQL — 65%', time: '2h ago' },
+              { id: 'm2', message: "Vikram Singh approved Priya Sharma's goal", time: '5h ago' },
+              { id: 'm3', message: 'Meera Nair submitted 4 goals for approval', time: '1d ago' },
+              { id: 'm4', message: 'Karan Joshi updated AWS certification progress to 30%', time: '2d ago' },
+            ].map((n) => (
+              <div key={n.id} className="flex gap-3" style={{ padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                 <div className="w-[18px] h-[18px] rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: 'color-mix(in srgb, var(--color-accent-600) 15%, transparent)' }}>
                   <Activity size={9} className="text-[var(--color-accent-500)]" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[12px] text-[var(--color-dark-200)] leading-relaxed line-clamp-2">{n.message}</div>
-                  <div className="text-[10px] text-[var(--color-dark-400)] mt-0.5 font-medium">{timeAgo(n.timestamp)}</div>
+                  <div className="text-[12px] text-[#64748b] leading-relaxed line-clamp-2">{n.message}</div>
+                  <div className="text-[11px] text-[#334155] mt-0.5">{n.time}</div>
                 </div>
               </div>
             ))}

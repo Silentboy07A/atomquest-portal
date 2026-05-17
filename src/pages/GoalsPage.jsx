@@ -77,23 +77,40 @@ export default function GoalsPage() {
       {/* Header */}
       <motion.div variants={item} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-[18px] font-bold text-[var(--color-dark-50)] mb-1" style={{ fontFamily: 'var(--font-display)' }}>
+          <h2 className="text-[22px] font-bold text-[#f1f5f9]" style={{ fontFamily: 'var(--font-display)' }}>
             {isAdmin ? 'All Goals' : 'My Goals'}
           </h2>
-          <p className="text-[12px] text-[var(--color-dark-300)]">
+          <p className="text-[13px] text-[#64748b] mt-1">
             {activeCycle?.name} · {myGoals.length} goals · {ws.total}/100 Weightage
           </p>
+          
+          {/* Filter Tabs */}
+          <div className="flex gap-2 mt-4 overflow-x-auto">
+            {['all', 'draft', 'pending', 'approved', 'rejected'].map((s) => (
+              <button 
+                key={s} 
+                onClick={() => setFilterStatus(s)} 
+                className={`px-4 py-1.5 text-[12px] font-medium transition-colors whitespace-nowrap ${
+                  filterStatus === s 
+                    ? 'bg-[var(--color-accent-600)] text-white rounded-md' 
+                    : 'text-[#64748b] bg-transparent hover:text-[var(--color-dark-100)]'
+                }`}
+              >
+                {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-[12px]">
           <button
             onClick={() => exportGoalsToCSV(filtered, users)}
-            className="btn btn-secondary flex items-center gap-2"
+            className="btn border border-[var(--color-accent-600)] text-[var(--color-accent-600)] hover:bg-[var(--color-accent-600)] hover:text-white flex items-center gap-2"
             title="Export goals to CSV"
           >
             <Download size={14} /> Export CSV
           </button>
           {!isAdmin && (
-            <button onClick={openCreate} className="btn btn-primary" disabled={myGoals.filter((g) => g.status !== 'rejected').length >= 8}>
+            <button onClick={openCreate} className="btn bg-[var(--color-accent-600)] text-white hover:bg-[var(--color-accent-500)]" disabled={myGoals.filter((g) => g.status !== 'rejected').length >= 8}>
               <Plus size={14} /> Create Goal
             </button>
           )}
@@ -110,33 +127,16 @@ export default function GoalsPage() {
         </motion.div>
       )}
 
-      {/* Filters */}
-      <motion.div variants={item} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 surface-raised p-2">
-        <div className="relative flex-1 max-w-xs w-full">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-dark-400)]" />
-          <input 
-            type="text" 
-            placeholder="Search goals..." 
-            value={search} 
-            onChange={(e) => setSearch(e.target.value)} 
-            className="w-full bg-transparent border-none text-[13px] text-[var(--color-dark-50)] pl-8 pr-3 py-1.5 outline-none placeholder:text-[var(--color-dark-400)]" 
-          />
-        </div>
-        <div className="flex gap-1 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-          {['all', 'draft', 'pending', 'approved', 'rejected'].map((s) => (
-            <button 
-              key={s} 
-              onClick={() => setFilterStatus(s)} 
-              className={`px-3 py-1.5 text-[12px] font-medium rounded-lg transition-colors whitespace-nowrap ${
-                filterStatus === s 
-                  ? 'bg-[var(--color-dark-700)] text-[var(--color-dark-50)]' 
-                  : 'text-[var(--color-dark-300)] hover:text-[var(--color-dark-100)] hover:bg-[var(--color-dark-800)]'
-              }`}
-            >
-              {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
-            </button>
-          ))}
-        </div>
+      {/* Search Input (kept outside filter tabs) */}
+      <motion.div variants={item} className="relative w-full max-w-sm mb-4">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-dark-400)]" />
+        <input 
+          type="text" 
+          placeholder="Search goals..." 
+          value={search} 
+          onChange={(e) => setSearch(e.target.value)} 
+          className="w-full bg-[#0d1117] border border-[rgba(255,255,255,0.06)] rounded-[8px] text-[13px] text-[#f1f5f9] pl-8 pr-3 py-1.5 outline-none placeholder-[#64748b]" 
+        />
       </motion.div>
 
       {/* Goals List */}
@@ -152,15 +152,15 @@ export default function GoalsPage() {
 
       {/* Weightage Summary Bar (My Goals Bottom) */}
       {!isAdmin && (
-        <motion.div variants={item} className="mt-8 p-5 rounded-2xl bg-[var(--color-dark-900)] border border-[var(--color-dark-700)]">
-          <div className="flex items-center justify-between mb-3">
+        <motion.div variants={item} className="mt-8">
+          <div className="flex items-center justify-between mb-2">
             <span className="text-[13px] font-bold text-[var(--color-dark-50)]">Weightage Summary</span>
-            <span className="text-[12px] text-[var(--color-dark-300)]">
-              {ws.total === 100 ? '100/100 Weightage used' : `${ws.total}/100 Weightage used — ${ws.remaining}% remaining`}
+            <span className="text-[12px] text-[#64748b]">
+              {ws.total}/100 Weightage used
             </span>
           </div>
-          <div className="h-2.5 rounded-full bg-[var(--color-dark-800)] overflow-hidden">
-            <div className="h-full rounded-full bg-teal-500 transition-all duration-500" style={{ width: `${ws.total}%` }} />
+          <div className="h-[8px] rounded-full bg-[rgba(255,255,255,0.04)] overflow-hidden">
+            <div className="h-full rounded-full bg-[var(--color-accent-600)] transition-all duration-500" style={{ width: `${ws.total}%` }} />
           </div>
         </motion.div>
       )}
@@ -185,38 +185,37 @@ function GoalRow({ goal, onEdit, onView, onDelete, onSubmit, onUpdateProgress, o
   const owner = users.find((u) => u.id === goal.userId);
 
   return (
-    <motion.div layout className="list-card p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center gap-6">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-3 mb-2 flex-wrap">
-          <button onClick={() => onView(goal)} className="text-[14px] font-semibold text-[var(--color-dark-50)] hover:text-[var(--color-accent-400)] transition-colors text-left truncate" style={{ fontFamily: 'var(--font-display)' }}>
+    <motion.div layout className="list-card flex flex-col lg:flex-row lg:items-center justify-between min-h-[64px]" style={{ padding: '16px 20px', marginBottom: '16px' }}>
+      <div className="flex flex-col gap-1.5 flex-1 min-w-0 pr-4">
+        <div className="flex items-center gap-3">
+          <button onClick={() => onView(goal)} className="text-[14px] font-semibold text-[var(--color-dark-50)] hover:text-[var(--color-accent-400)] transition-colors text-left truncate">
             {goal.title}
           </button>
+          <span className="badge badge-subtle">{goal.category}</span>
           <StatusBadge status={goal.status} />
           {locked && (
-            <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-[var(--color-dark-300)] bg-[var(--color-dark-800)] border border-[var(--color-dark-700)] px-2 py-0.5 rounded-md">
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[var(--color-dark-300)] bg-[var(--color-dark-800)] border border-[var(--color-dark-700)] px-2 py-0.5 rounded-md">
               <Lock size={10} /> Locked
             </span>
           )}
         </div>
-        <div className="flex items-center gap-x-4 gap-y-2 text-[11px] text-[var(--color-dark-400)] flex-wrap">
-          {isAdmin && owner && <span className="font-medium text-[var(--color-dark-200)]">{owner.name}</span>}
-          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />{goal.category}</span>
-          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />Weight: <strong className="text-[var(--color-dark-100)]">{goal.weightage}%</strong></span>
-          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />Due: {formatDate(goal.dueDate)}</span>
+        <div className="flex items-center gap-x-4 gap-y-2 text-[11px] text-[#64748b] flex-wrap mt-0.5">
+          {isAdmin && owner && <span className="font-medium text-[#f1f5f9]">{owner.name}</span>}
+          <span className="flex items-center gap-1.5">Weight: <strong className="text-[#cbd5e1]">{goal.weightage}%</strong></span>
+          <span className="flex items-center gap-1.5">Due: {formatDate(goal.dueDate)}</span>
           <PriorityBadge priority={goal.priority} />
         </div>
       </div>
       
-      <div className="flex flex-col sm:flex-row sm:items-center gap-5 shrink-0 border-t border-[var(--color-dark-700)] lg:border-t-0 pt-4 lg:pt-0">
-        <div className="w-full sm:w-48">
-          <div className="flex justify-between text-[11px] font-medium mb-1.5">
-            <span className="text-[var(--color-dark-300)]">Progress</span>
-            <span className="text-[var(--color-dark-100)]">{goal.progress}%</span>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-6 shrink-0 mt-4 lg:mt-0">
+        <div className="flex items-center gap-3">
+          <div className="w-[100px]">
+            <ProgressBar value={goal.progress} size="sm" showLabel={false} />
           </div>
-          <ProgressBar value={goal.progress} size="sm" showLabel={false} />
+          <span className="text-[13px] font-bold text-[#f1f5f9] w-[36px] text-right">{goal.progress}%</span>
         </div>
         
-        <div className="flex items-center gap-2 self-end sm:self-auto">
+        <div className="flex items-center gap-2">
           {goal.status === 'approved' && !isAdmin ? (
             <button onClick={onUpdateProgress} className="btn btn-secondary btn-sm">Update</button>
           ) : (

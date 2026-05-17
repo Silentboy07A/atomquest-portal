@@ -15,11 +15,11 @@ export default function TopBar({ title, subtitle }) {
         borderBottom: '1px solid rgba(255,255,255,0.05)',
       }}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-[12px]">
         <h1 className="text-[18px] font-bold text-[#f1f5f9]">
           {title}
         </h1>
-        <span className="text-[10px] font-medium text-[var(--color-accent-600)] border border-[var(--color-accent-600)] px-2 py-0.5 rounded-[4px] uppercase tracking-wider">
+        <span className="text-[10px] font-medium text-[var(--color-accent-600)] border border-[var(--color-accent-600)] px-[8px] py-[2px] rounded-[4px] uppercase tracking-wider">
           {currentUser.role}
         </span>
       </div>
@@ -35,7 +35,7 @@ export default function TopBar({ title, subtitle }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-[16px]">
         {/* Notifications */}
         <button className="relative w-8 h-8 rounded-lg flex items-center justify-center text-[#64748b] hover:text-[#f1f5f9] transition-colors">
           <Bell size={18} />

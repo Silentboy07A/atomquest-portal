@@ -39,23 +39,23 @@ export default function AuditPage() {
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 md:space-y-6 max-w-7xl mx-auto">
       <motion.div variants={item} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-[18px] font-bold text-[var(--color-dark-50)] mb-1" style={{ fontFamily: 'var(--font-display)' }}>Audit Trail</h2>
-          <p className="text-[12px] text-[var(--color-dark-300)]">{auditLogs.length} total entries</p>
+          <h2 className="text-[22px] font-bold text-[#f1f5f9]" style={{ fontFamily: 'var(--font-display)' }}>Audit Trail</h2>
+          <p className="text-[13px] text-[#64748b] mt-1">{auditLogs.length} total entries</p>
         </div>
       </motion.div>
 
       {/* Summary Stats */}
-      <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: 'Total Events', value: auditLogs.length, color: 'var(--color-accent-400)' },
-          { label: 'Goals Created', value: auditLogs.filter((l) => l.action === 'goal_created').length, color: 'var(--color-accent-300)' },
-          { label: 'Approvals', value: auditLogs.filter((l) => l.action === 'goal_approved').length, color: 'var(--color-success-500)' },
-          { label: 'Rejections', value: auditLogs.filter((l) => l.action === 'goal_rejected').length, color: 'var(--color-danger-500)' },
+          { label: 'Total Events', value: auditLogs.length, color: '#0d9488' },
+          { label: 'Goals Created', value: auditLogs.filter((l) => l.action === 'goal_created').length, color: '#4f46e5' },
+          { label: 'Approvals', value: auditLogs.filter((l) => l.action === 'goal_approved').length, color: '#10b981' },
+          { label: 'Rejections', value: auditLogs.filter((l) => l.action === 'goal_rejected').length, color: '#ef4444' },
         ].map((stat) => (
-          <Card key={stat.label} hover={false} className="flex flex-col items-center justify-center py-5">
-            <div className="text-[20px] font-bold mb-1" style={{ fontFamily: 'var(--font-display)', color: stat.color }}>{stat.value}</div>
-            <div className="text-[10px] uppercase tracking-wider text-[var(--color-dark-400)] font-medium">{stat.label}</div>
-          </Card>
+          <div key={stat.label} className="surface-raised flex flex-col justify-center" style={{ padding: '16px 20px', minHeight: '80px' }}>
+            <div className="text-[26px] font-bold leading-none" style={{ fontFamily: 'var(--font-display)', color: stat.color }}>{stat.value}</div>
+            <div className="text-[11px] uppercase tracking-wider text-[#64748b] font-medium mt-1">{stat.label}</div>
+          </div>
         ))}
       </motion.div>
 
@@ -99,49 +99,53 @@ export default function AuditPage() {
       {filtered.length === 0 ? (
         <EmptyState icon={History} title="No audit entries" description="No entries match your current filters." />
       ) : (
-        <motion.div variants={item} className="space-y-3">
+        <div className="flex flex-col gap-1">
           {filtered.map((log) => {
             const user = users.find((u) => u.id === log.userId);
             const actionConfig = ACTION_ICONS[log.action] || ACTION_ICONS.goal_updated;
             const ActionIcon = actionConfig.icon;
 
             return (
-              <motion.div 
-                key={log.id} 
-                layout 
-                className="surface-raised p-4 flex flex-col sm:flex-row sm:items-start gap-4 hover:border-[var(--color-dark-600)] transition-colors"
+              <div 
+                key={log.id}
+                className="list-card flex items-center gap-3"
+                style={{ padding: '11px 16px' }}
               >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: actionConfig.bg }}>
-                  <ActionIcon size={16} style={{ color: actionConfig.color }} />
+                {/* Icon */}
+                <div className="w-7 h-7 rounded-[6px] flex items-center justify-center shrink-0" style={{ background: actionConfig.bg }}>
+                  <ActionIcon size={12} style={{ color: actionConfig.color }} />
                 </div>
+
+                {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1.5 flex-wrap">
-                    <span className="text-[13px] font-semibold text-[var(--color-dark-50)]">{user?.name || 'System'}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[13px] font-semibold text-[#f1f5f9]">{user?.name || 'System'}</span>
                     <span 
-                      className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md"
+                      className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0"
                       style={{ background: actionConfig.bg, color: actionConfig.color }}
                     >
                       {log.action.replace(/_/g, ' ')}
                     </span>
+                    {log.changes?.field && (
+                      <span className="text-[10px] text-[#64748b] hide-mobile">
+                        {log.changes.field}: 
+                        {log.changes.from !== null && <span className="text-[#ef4444] line-through ml-1">{String(log.changes.from)}</span>}
+                        <span className="mx-1 text-[#334155]">→</span>
+                        <span className="text-[#10b981] font-medium">{String(log.changes.to)}</span>
+                      </span>
+                    )}
                   </div>
-                  <p className="text-[12px] text-[var(--color-dark-200)] leading-relaxed">{log.details}</p>
-                  
-                  {log.changes?.field && (
-                    <div className="flex items-center gap-2 mt-2 text-[11px] bg-[var(--color-dark-900)] self-start inline-flex px-3 py-1.5 rounded-lg border border-[var(--color-dark-700)]">
-                      <span className="text-[var(--color-dark-400)] font-medium">{log.changes.field}:</span>
-                      {log.changes.from !== null && <span className="text-[var(--color-danger-400)] line-through opacity-80">{String(log.changes.from)}</span>}
-                      <span className="text-[var(--color-dark-500)]">→</span>
-                      <span className="text-[var(--color-success-400)] font-medium">{String(log.changes.to)}</span>
-                    </div>
-                  )}
+                  <p className="text-[11px] text-[#64748b] truncate">{log.details}</p>
                 </div>
-                <div className="text-[10px] text-[var(--color-dark-400)] shrink-0 font-medium pt-1" title={formatDateTime(log.timestamp)}>
+
+                {/* Timestamp */}
+                <div className="text-[10px] text-[#475569] shrink-0 font-medium" title={formatDateTime(log.timestamp)}>
                   {timeAgo(log.timestamp)}
                 </div>
-              </motion.div>
+              </div>
             );
           })}
-        </motion.div>
+        </div>
       )}
     </motion.div>
   );

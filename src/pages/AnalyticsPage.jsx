@@ -47,20 +47,13 @@ function KPI({ label, value, icon: Icon, color, delta }) {
 }
 
 function HeatCell({ value, label }) {
-  const intensity = Math.min(value / 100, 1);
-  // Using explicit rgb values mixed with transparency for the background
-  const bg = value >= 75 
-    ? `color-mix(in srgb, var(--color-success-500) ${10 + intensity * 25}%, transparent)` 
-    : value >= 40 
-      ? `color-mix(in srgb, var(--color-warning-500) ${10 + intensity * 20}%, transparent)` 
-      : `color-mix(in srgb, var(--color-danger-500) ${10 + intensity * 20}%, transparent)`;
-  
-  const color = value >= 75 ? 'var(--color-success-400)' : value >= 40 ? 'var(--color-warning-400)' : 'var(--color-danger-400)';
-  
+  const bg = value >= 75 ? '#10b981' : value >= 40 ? '#f59e0b' : '#ef4444';
   return (
-    <div className="surface-raised !bg-transparent p-3 text-center cursor-default group relative" style={{ background: bg }}>
-      <div className="text-lg font-bold" style={{ color, fontFamily:'var(--font-display)' }}>{value}%</div>
-      <div className="text-[10px] text-[var(--color-dark-200)] mt-0.5 truncate">{label}</div>
+    <div className="flex flex-col items-center gap-1 group relative">
+      <div className="w-[36px] h-[36px] rounded-[6px] flex items-center justify-center cursor-default transition-transform hover:scale-110" style={{ backgroundColor: bg }}>
+        <span className="text-[10px] font-bold text-white/90">{value}%</span>
+      </div>
+      <div className="text-[10px] text-[#64748b] truncate w-[50px] text-center">{label.slice(0, 3).toUpperCase()}</div>
     </div>
   );
 }
@@ -214,9 +207,9 @@ export default function AnalyticsPage() {
 
       {/* ═══ DEPARTMENT HEATMAP ═══ */}
       {(isAdmin || isManager) && (
-        <div className="surface-raised p-5">
+        <div className="surface-raised p-[24px]">
           <h3 className="section-header mb-4">Department Performance Heatmap</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="flex flex-wrap gap-3">
             {deptHeatmap.map((d) => <HeatCell key={d.dept} value={d.avg} label={d.dept} />)}
           </div>
         </div>
@@ -229,38 +222,33 @@ export default function AnalyticsPage() {
           <div className="px-5 py-3.5" style={{ borderBottom:'1px solid var(--color-dark-700)' }}>
             <h3 className="section-header">Team-wise Completion Matrix</h3>
           </div>
-          <div className="overflow-x-auto">
-            <table className="data-table">
-              <thead>
-                <tr><th>Employee</th><th>Dept</th><th>Goals</th><th>Done</th><th>Progress</th></tr>
-              </thead>
-              <tbody>
-                {teamMatrix.slice(0, 8).map((r) => (
-                  <tr key={r.user.id}>
-                    <td>
-                      <div className="flex items-center gap-2">
-                        <Avatar name={r.user.name} size="sm" />
-                        <span className="text-[12px] text-[var(--color-dark-50)] font-medium">{r.user.name}</span>
-                      </div>
-                    </td>
-                    <td className="text-[12px] text-[var(--color-dark-300)]">{r.user.department}</td>
-                    <td className="text-[12px] text-[var(--color-dark-100)] font-medium tabular-nums">{r.total}</td>
-                    <td className="text-[12px] text-[var(--color-success-400)] font-medium tabular-nums">{r.completed}</td>
-                    <td className="w-32">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex-1 h-1.5 rounded-full bg-[var(--color-dark-700)] overflow-hidden">
-                          <div className="h-full rounded-full transition-all duration-500" style={{
-                            width: `${r.avg}%`,
-                            background: r.avg >= 75 ? 'var(--color-success-500)' : r.avg >= 40 ? 'var(--color-warning-500)' : 'var(--color-danger-500)',
-                          }} />
-                        </div>
-                        <span className="text-[11px] font-medium text-[var(--color-dark-200)] w-8 text-right tabular-nums">{r.avg}%</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex flex-col">
+            {teamMatrix.slice(0, 8).map((r) => (
+              <div key={r.user.id} className="flex items-center justify-between" style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                <div className="flex items-center gap-3">
+                  <Avatar name={r.user.name} size="sm" />
+                  <div>
+                    <div className="text-[13px] font-medium text-[#f1f5f9]">{r.user.name}</div>
+                    <div className="text-[11px] text-[#64748b]">{r.user.department}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6">
+                  <div className="flex gap-4 text-[11px] text-[#94a3b8] hide-mobile">
+                    <span>Goals: <strong className="text-[#e2e8f0]">{r.total}</strong></span>
+                    <span>Done: <strong className="text-[#10b981]">{r.completed}</strong></span>
+                  </div>
+                  <div className="w-[100px] flex items-center gap-2.5">
+                    <div className="flex-1 h-1.5 rounded-full bg-[rgba(255,255,255,0.06)] overflow-hidden">
+                      <div className="h-full rounded-full transition-all duration-500" style={{
+                        width: `${r.avg}%`,
+                        background: r.avg >= 75 ? '#10b981' : r.avg >= 40 ? '#f59e0b' : '#ef4444',
+                      }} />
+                    </div>
+                    <span className="text-[11px] font-medium text-[#e2e8f0] w-8 text-right tabular-nums">{r.avg}%</span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

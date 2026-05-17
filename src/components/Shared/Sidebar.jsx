@@ -117,7 +117,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-2 space-y-2">
+      <nav className="flex-1 overflow-y-auto py-2">
         {sections.map((group) => (
           <div key={group.section}>
             {sidebarOpen && (
@@ -130,7 +130,7 @@ export default function Sidebar() {
                 </span>
               </div>
             )}
-            <div className="space-y-0.5">
+            <div className="flex flex-col">
               {group.items.map((item) => (
                 <NavLink
                   key={item.to}

@@ -30,8 +30,8 @@ export default function NotificationsPage() {
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 md:space-y-6 max-w-4xl mx-auto">
       <motion.div variants={item} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[var(--color-dark-700)] pb-5">
         <div>
-          <h2 className="text-[18px] font-bold text-[var(--color-dark-50)] mb-1" style={{ fontFamily: 'var(--font-display)' }}>Notifications</h2>
-          <p className="text-[12px] text-[var(--color-dark-300)]">{unreadCount} unread · {myNotifs.length} total</p>
+          <h2 className="text-[22px] font-bold text-[#f1f5f9]" style={{ fontFamily: 'var(--font-display)' }}>Notifications</h2>
+          <p className="text-[13px] text-[#64748b] mt-1">{unreadCount} unread · {myNotifs.length} total</p>
         </div>
         {unreadCount > 0 && (
           <button onClick={markAllRead} className="btn btn-secondary btn-sm">

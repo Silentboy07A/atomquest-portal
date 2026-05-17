@@ -17,8 +17,8 @@ export default function AdminPage() {
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 md:space-y-6 max-w-7xl mx-auto">
       <motion.div variants={item} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-[18px] font-bold text-[var(--color-dark-50)] mb-1" style={{ fontFamily: 'var(--font-display)' }}>Admin Panel</h2>
-          <p className="text-[12px] text-[var(--color-dark-300)]">Manage cycles, users, and system settings</p>
+          <h2 className="text-[22px] font-bold text-[#f1f5f9]" style={{ fontFamily: 'var(--font-display)' }}>Admin Panel</h2>
+          <p className="text-[13px] text-[#64748b] mt-1">Manage cycles, users, and system settings</p>
         </div>
       </motion.div>
 

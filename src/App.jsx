@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Sidebar from './components/Shared/Sidebar';
 import TopBar from './components/Shared/TopBar';
@@ -29,7 +29,8 @@ function AppLayout() {
     '/shared-goals': 'Shared Goals',
     '/admin': 'Admin Panel',
   };
-  const path = window.location.pathname;
+  const location = useLocation();
+  const path = location.pathname === '/' ? '/' : '/' + location.pathname.replace(/^\//, '').split('/')[0];
   const title = titles[path] || 'Dashboard';
 
   return (
@@ -37,7 +38,7 @@ function AppLayout() {
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar title={title} subtitle={currentUser.role === 'admin' ? 'Admin' : currentUser.role === 'manager' ? 'Manager' : 'Employee'} />
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
+        <main className="flex-1 p-[32px] overflow-y-auto">
           <Outlet />
         </main>
       </div>

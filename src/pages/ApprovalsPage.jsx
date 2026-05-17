@@ -64,41 +64,27 @@ export default function ApprovalsPage() {
       {/* Header */}
       <motion.div variants={item} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-[18px] font-bold text-[var(--color-dark-50)] mb-1" style={{ fontFamily: 'var(--font-display)' }}>Approvals</h2>
-          <p className="text-[12px] text-[var(--color-dark-300)]">
+          <h2 className="text-[22px] font-bold text-[#f1f5f9]" style={{ fontFamily: 'var(--font-display)' }}>Approvals</h2>
+          <p className="text-[13px] text-[#64748b] mt-1">
             {pendingCount} pending · {teamGoals.length} total team goals
           </p>
-        </div>
-      </motion.div>
-
-      {/* Filters & Summary */}
-      <motion.div variants={item} className="flex flex-col md:flex-row gap-4 md:items-center">
-        {pendingCount > 0 && (
-          <div className="flex-1 surface-raised p-4 flex items-center gap-4 border border-[var(--color-dark-600)] bg-[var(--color-dark-900)]">
-             <div className="w-10 h-10 rounded-lg bg-[var(--color-accent-600)]/10 flex items-center justify-center">
-              <Clock size={20} className="text-[var(--color-accent-500)]" />
-            </div>
-            <div>
-              <div className="text-[16px] font-bold text-[var(--color-dark-50)]" style={{ fontFamily: 'var(--font-display)' }}>{pendingCount}</div>
-              <div className="text-[11px] text-[var(--color-dark-400)] font-medium">Goals awaiting your review</div>
-            </div>
+          
+          {/* Filter Tabs */}
+          <div className="flex gap-2 mt-4 overflow-x-auto">
+            {['pending', 'approved', 'rejected', 'all'].map((s) => (
+              <button 
+                key={s} 
+                onClick={() => setFilter(s)} 
+                className={`px-4 py-1.5 text-[12px] font-medium transition-colors whitespace-nowrap ${
+                  filter === s 
+                    ? 'bg-[var(--color-accent-600)] text-white rounded-md' 
+                    : 'text-[#64748b] bg-transparent hover:text-[var(--color-dark-100)]'
+                }`}
+              >
+                {s === 'pending' ? `Pending (${pendingCount})` : s.charAt(0).toUpperCase() + s.slice(1)}
+              </button>
+            ))}
           </div>
-        )}
-        
-        <div className={`surface-raised p-2 flex gap-1 overflow-x-auto ${pendingCount === 0 ? 'w-full' : ''}`}>
-          {['pending', 'approved', 'rejected', 'all'].map((s) => (
-            <button 
-              key={s} 
-              onClick={() => setFilter(s)} 
-              className={`px-3 py-1.5 text-[12px] font-medium rounded-lg transition-colors whitespace-nowrap ${
-                filter === s 
-                  ? 'bg-[var(--color-dark-700)] text-[var(--color-dark-50)]' 
-                  : 'text-[var(--color-dark-300)] hover:text-[var(--color-dark-100)] hover:bg-[var(--color-dark-800)]'
-              }`}
-            >
-              {s === 'pending' ? `Pending (${pendingCount})` : s.charAt(0).toUpperCase() + s.slice(1)}
-            </button>
-          ))}
         </div>
       </motion.div>
 
@@ -113,58 +99,49 @@ export default function ApprovalsPage() {
               <motion.div 
                 key={goal.id} 
                 layout 
-                className="list-card p-4 sm:p-5 flex flex-col gap-4"
+                className="list-card flex flex-col justify-center min-h-[64px]"
+                style={{ padding: '16px 20px', marginBottom: '16px' }}
               >
-                <div className="flex flex-col md:flex-row gap-5">
-                  {/* Employee Info */}
-                  <div className="flex items-center gap-4 md:w-56 shrink-0 border-b border-[var(--color-dark-700)] md:border-b-0 md:border-r pb-4 md:pb-0 md:pr-4">
-                    <Avatar name={owner?.name} size="md" />
-                    <div className="min-w-0">
-                      <div className="text-[13px] font-semibold text-[var(--color-dark-50)] truncate mb-0.5">{owner?.name}</div>
-                      <div className="text-[11px] text-[var(--color-dark-400)] truncate">{owner?.title}</div>
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between">
+                  {/* Left Side: Employee & Goal Info */}
+                  <div className="flex flex-col gap-1.5 flex-1 min-w-0 pr-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar name={owner?.name} size="sm" />
+                      <span className="text-[14px] font-semibold text-[#f1f5f9] truncate">
+                        {goal.title}
+                      </span>
+                      <span className="badge badge-subtle">{goal.category}</span>
                     </div>
-                  </div>
-
-                  {/* Goal Info */}
-                  <div className="flex-1 min-w-0 space-y-2">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <span className="text-[14px] font-semibold text-[var(--color-dark-50)] truncate" style={{ fontFamily: 'var(--font-display)' }}>{goal.title}</span>
-                      <StatusBadge status={goal.status} />
-                    </div>
-                    <p className="text-[12px] text-[var(--color-dark-200)] leading-relaxed">{goal.description}</p>
-                    <div className="flex items-center gap-x-4 gap-y-2 text-[11px] text-[var(--color-dark-400)] flex-wrap">
-                      <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />{goal.category}</span>
-                      <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />UoM: {goal.uom || 'Numeric'}</span>
+                    <div className="flex items-center gap-x-4 gap-y-2 text-[11px] text-[#64748b] flex-wrap mt-0.5">
+                      <span className="font-medium text-[#f1f5f9]">{owner?.name}</span>
+                      <span className="flex items-center gap-1.5">UoM: {goal.uom || 'Numeric'}</span>
                       {goal.status === 'pending' ? (
                         <>
                           <div className="flex items-center gap-1.5">
-                            <span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />
-                            Target: <input type="text" className="input py-0.5 px-2 text-[11px] w-20 h-6" value={edits[goal.id]?.targetValue ?? goal.targetValue} onChange={(e) => handleEdit(goal.id, 'targetValue', e.target.value)} />
+                            Target: <input type="text" className="bg-[#0a0d14] border border-[rgba(255,255,255,0.1)] rounded text-[#f1f5f9] py-0.5 px-2 text-[11px] w-20 h-6 outline-none" value={edits[goal.id]?.targetValue ?? goal.targetValue} onChange={(e) => handleEdit(goal.id, 'targetValue', e.target.value)} />
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />
-                            Weight: <input type="number" className="input py-0.5 px-2 text-[11px] w-16 h-6" value={edits[goal.id]?.weightage ?? goal.weightage} onChange={(e) => handleEdit(goal.id, 'weightage', Number(e.target.value))} />%
+                            Weight: <input type="number" className="bg-[#0a0d14] border border-[rgba(255,255,255,0.1)] rounded text-[#f1f5f9] py-0.5 px-2 text-[11px] w-16 h-6 outline-none" value={edits[goal.id]?.weightage ?? goal.weightage} onChange={(e) => handleEdit(goal.id, 'weightage', Number(e.target.value))} />%
                           </div>
                         </>
                       ) : (
                         <>
-                          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />Target: <strong className="text-[var(--color-dark-100)]">{goal.targetValue || 100}</strong></span>
-                          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />Weight: <strong className="text-[var(--color-dark-100)]">{goal.weightage}%</strong></span>
+                          <span className="flex items-center gap-1.5">Target: <strong className="text-[#cbd5e1]">{goal.targetValue || 100}</strong></span>
+                          <span className="flex items-center gap-1.5">Weight: <strong className="text-[#cbd5e1]">{goal.weightage}%</strong></span>
                         </>
                       )}
-                      <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[var(--color-dark-500)]" />Due: {formatDate(goal.dueDate)}</span>
                     </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center gap-2 shrink-0 self-start md:self-center">
+                  {/* Right Side: Actions */}
+                  <div className="flex items-center gap-2 shrink-0 mt-4 lg:mt-0">
                     <button onClick={() => setViewGoal(goal)} className="btn btn-secondary btn-sm btn-icon" title="View details"><Eye size={14} /></button>
                     {goal.status === 'pending' && (
                       <>
-                        <button onClick={() => { setRejectingId(goal.id); setRejectReason(''); }} className="btn btn-secondary btn-sm px-3">
+                        <button onClick={() => { setRejectingId(goal.id); setRejectReason(''); }} className="btn border border-[#ef4444] text-[#ef4444] hover:bg-[#ef4444] hover:text-white btn-sm px-3">
                           <X size={13} /> <span className="hide-mobile">Reject</span>
                         </button>
-                        <button onClick={() => handleApprove(goal)} className="btn btn-primary btn-sm px-3">
+                        <button onClick={() => handleApprove(goal)} className="btn bg-[var(--color-accent-600)] text-white hover:bg-[var(--color-accent-500)] btn-sm px-3">
                           <Check size={13} /> <span className="hide-mobile">Approve</span>
                         </button>
                       </>
@@ -174,14 +151,13 @@ export default function ApprovalsPage() {
 
                 {/* Reject Slide-in */}
                 {rejectingId === goal.id && (
-                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex gap-3 items-start">
-                    <MessageSquare size={16} className="text-[var(--color-danger-400)] mt-2" />
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-4 pt-4 border-t border-[rgba(255,255,255,0.06)] flex gap-3 items-start">
                     <div className="flex-1">
-                      <input type="text" className="input w-full" placeholder="Reason for rejection (required)..." value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} autoFocus />
+                      <input type="text" className="w-full bg-[#0a0d14] border border-[#ef4444]/50 rounded-[6px] text-[13px] text-[#f1f5f9] px-3 py-2 outline-none placeholder-[#64748b]" placeholder="Reason for rejection (required)..." value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} autoFocus />
                     </div>
-                    <div className="flex gap-2 mt-1">
-                      <button onClick={() => setRejectingId(null)} className="btn btn-secondary btn-sm">Cancel</button>
-                      <button onClick={() => handleReject(goal)} className="btn btn-danger btn-sm" disabled={!rejectReason.trim()}>Confirm Rejection</button>
+                    <div className="flex gap-2">
+                      <button onClick={() => setRejectingId(null)} className="btn bg-transparent border border-[rgba(255,255,255,0.1)] text-[#f1f5f9] hover:bg-[rgba(255,255,255,0.05)] text-[13px] px-3 py-2 rounded-[6px]">Cancel</button>
+                      <button onClick={() => handleReject(goal)} className="btn bg-[#ef4444] text-white hover:bg-[#dc2626] text-[13px] px-3 py-2 rounded-[6px]" disabled={!rejectReason.trim()}>Confirm</button>
                     </div>
                   </motion.div>
                 )}
