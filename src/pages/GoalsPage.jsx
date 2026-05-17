@@ -260,10 +260,7 @@ function GoalFormModal({ isOpen, onClose, editGoal, myGoals, userId, cycleId, on
     }
 
     const now = Date.now();
-    if (now - lastSuggestTime.current < 10000) {
-      toast.error('Rate limited: Please wait 10 seconds between requests.', { style: { background: '#0d1117', color: '#fff', border: '1px solid rgba(239,68,68,0.5)' } });
-      return;
-    }
+    // Removed 10s rate limit to ensure smooth hackathon demo
     lastSuggestTime.current = now;
 
     setIsSuggesting(true);

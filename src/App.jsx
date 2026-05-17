@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Sidebar from './components/Shared/Sidebar';
 import TopBar from './components/Shared/TopBar';
+import AICoachWidget from './components/Shared/AICoachWidget';
 import DashboardPage from './pages/DashboardPage';
 import GoalsPage from './pages/GoalsPage';
 import ApprovalsPage from './pages/ApprovalsPage';
@@ -40,6 +41,7 @@ function AppLayout() {
           <Outlet />
         </main>
       </div>
+      <AICoachWidget />
     </div>
   );
 }
