@@ -13,29 +13,29 @@ export default function SharedGoalsPage() {
   const activeShared = sharedGoals.filter((sg) => sg.cycleId === activeCycle?.id);
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 md:space-y-8 max-w-7xl mx-auto">
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 md:space-y-6 max-w-7xl mx-auto">
       <motion.div variants={item}>
-        <h2 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-display)' }}>Shared Goals</h2>
-        <p className="text-sm text-[var(--color-dark-300)]">{activeCycle?.name} · {activeShared.length} organization-level goals</p>
+        <h2 className="text-[18px] font-bold text-[var(--color-dark-50)] mb-1" style={{ fontFamily: 'var(--font-display)' }}>Shared Goals</h2>
+        <p className="text-[12px] text-[var(--color-dark-300)]">{activeCycle?.name} · {activeShared.length} organization-level goals</p>
       </motion.div>
 
       {activeShared.length === 0 ? (
         <EmptyState icon={Share2} title="No shared goals" description="Organization-level shared goals will appear here." />
       ) : (
-        <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+        <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
           {activeShared.map((sg) => {
             const assignees = sg.assignedTo.map((uid) => users.find((u) => u.id === uid)).filter(Boolean);
             return (
               <motion.div 
                 key={sg.id} 
                 layout
-                className="bg-[var(--color-dark-800)] border border-white/[0.04] p-5 sm:p-6 rounded-xl hover:border-white/[0.08] transition-colors flex flex-col"
+                className="surface-raised p-5 hover:border-[var(--color-dark-600)] transition-colors flex flex-col"
               >
-                <div className="flex items-start justify-between gap-4 mb-5">
+                <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
                     <div className="flex items-center gap-2 mb-1.5">
                       <Share2 size={16} className="text-[var(--color-accent-400)] shrink-0" />
-                      <h3 className="text-lg font-bold text-white line-clamp-2" style={{ fontFamily: 'var(--font-display)' }}>{sg.title}</h3>
+                      <h3 className="text-[15px] font-bold text-[var(--color-dark-50)] line-clamp-2" style={{ fontFamily: 'var(--font-display)' }}>{sg.title}</h3>
                     </div>
                     <div className="flex items-center gap-3 text-[11px] font-medium text-[var(--color-dark-400)]">
                       <span>{sg.department}</span>
@@ -45,15 +45,15 @@ export default function SharedGoalsPage() {
                   </div>
                 </div>
 
-                <div className="mb-6 flex-1">
-                  <div className="flex justify-between text-[11px] font-medium mb-2">
+                <div className="mb-5 flex-1">
+                  <div className="flex justify-between text-[11px] font-medium mb-1.5">
                     <span className="text-[var(--color-dark-300)]">Overall Progress</span>
-                    <span className="text-white">{sg.progress}%</span>
+                    <span className="text-[var(--color-dark-50)]">{sg.progress}%</span>
                   </div>
-                  <ProgressBar value={sg.progress} size="md" showLabel={false} />
+                  <ProgressBar value={sg.progress} size="sm" showLabel={false} />
                 </div>
 
-                <div className="flex items-center justify-between gap-3 pt-4 border-t border-white/[0.04]">
+                <div className="flex items-center justify-between gap-3 pt-4 border-t border-[var(--color-dark-700)]">
                   {/* Assignees */}
                   <div className="flex items-center gap-2.5">
                     <Users size={14} className="text-[var(--color-dark-400)] shrink-0" />
@@ -64,7 +64,7 @@ export default function SharedGoalsPage() {
                         </div>
                       ))}
                       {assignees.length > 5 && (
-                        <div className="w-7 h-7 rounded-lg bg-[var(--color-dark-700)] flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[var(--color-dark-800)] z-10">
+                        <div className="w-7 h-7 rounded-lg bg-[var(--color-dark-700)] flex items-center justify-center text-[10px] font-bold text-[var(--color-dark-50)] ring-2 ring-[var(--color-dark-800)] z-10">
                           +{assignees.length - 5}
                         </div>
                       )}
@@ -73,9 +73,9 @@ export default function SharedGoalsPage() {
 
                   {/* Locked Fields */}
                   {sg.lockedFields?.length > 0 && (
-                    <div className="flex items-center gap-1.5 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">
-                      <Lock size={12} className="text-amber-400" />
-                      <span className="text-[10px] text-amber-300 font-medium whitespace-nowrap">
+                    <div className="flex items-center gap-1.5 bg-[var(--color-dark-800)] px-2 py-1 rounded-md border border-[var(--color-dark-700)]">
+                      <Lock size={12} className="text-[var(--color-dark-300)]" />
+                      <span className="text-[10px] text-[var(--color-dark-100)] font-medium whitespace-nowrap">
                         {sg.lockedFields.length} locked fields
                       </span>
                     </div>

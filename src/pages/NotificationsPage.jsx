@@ -9,12 +9,12 @@ const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { st
 const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } } };
 
 const TYPE_CONFIG = {
-  approval: { icon: Check, color: '#10b981', bg: 'rgba(16,185,129,0.1)', label: 'Approved' },
-  rejection: { icon: AlertTriangle, color: '#ef4444', bg: 'rgba(239,68,68,0.1)', label: 'Rejected' },
-  approval_request: { icon: Clock, color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', label: 'Pending' },
-  reminder: { icon: Bell, color: '#185FA5', bg: 'rgba(24,95,165,0.1)', label: 'Reminder' },
-  system: { icon: Info, color: '#8A96B0', bg: 'rgba(138,150,176,0.1)', label: 'System' },
-  achievement: { icon: Award, color: '#0891b2', bg: 'rgba(8,145,178,0.1)', label: 'Achievement' },
+  approval: { icon: Check, color: 'var(--color-success-500)', bg: 'color-mix(in srgb, var(--color-success-500) 15%, transparent)', label: 'Approved' },
+  rejection: { icon: AlertTriangle, color: 'var(--color-danger-500)', bg: 'color-mix(in srgb, var(--color-danger-500) 15%, transparent)', label: 'Rejected' },
+  approval_request: { icon: Clock, color: 'var(--color-warning-500)', bg: 'color-mix(in srgb, var(--color-warning-500) 15%, transparent)', label: 'Pending' },
+  reminder: { icon: Bell, color: 'var(--color-accent-400)', bg: 'color-mix(in srgb, var(--color-accent-500) 15%, transparent)', label: 'Reminder' },
+  system: { icon: Info, color: 'var(--color-dark-400)', bg: 'color-mix(in srgb, var(--color-dark-400) 15%, transparent)', label: 'System' },
+  achievement: { icon: Award, color: 'var(--color-success-400)', bg: 'color-mix(in srgb, var(--color-success-500) 15%, transparent)', label: 'Achievement' },
 };
 
 export default function NotificationsPage() {
@@ -27,11 +27,11 @@ export default function NotificationsPage() {
   const unreadCount = myNotifs.filter((n) => !n.read).length;
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 md:space-y-8 max-w-4xl mx-auto">
-      <motion.div variants={item} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/[0.04] pb-6">
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 md:space-y-6 max-w-4xl mx-auto">
+      <motion.div variants={item} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[var(--color-dark-700)] pb-5">
         <div>
-          <h2 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'var(--font-display)' }}>Notifications</h2>
-          <p className="text-sm text-[var(--color-dark-300)]">{unreadCount} unread · {myNotifs.length} total</p>
+          <h2 className="text-[18px] font-bold text-[var(--color-dark-50)] mb-1" style={{ fontFamily: 'var(--font-display)' }}>Notifications</h2>
+          <p className="text-[12px] text-[var(--color-dark-300)]">{unreadCount} unread · {myNotifs.length} total</p>
         </div>
         {unreadCount > 0 && (
           <button onClick={markAllRead} className="btn btn-secondary btn-sm">
@@ -51,27 +51,27 @@ export default function NotificationsPage() {
               <motion.div
                 key={notif.id}
                 layout
-                className={`bg-[var(--color-dark-800)] rounded-xl p-5 flex items-start gap-4 cursor-pointer transition-colors border ${!notif.read ? 'border-l-[3px] border-y-white/[0.04] border-r-white/[0.04]' : 'border-white/[0.04]'} hover:bg-[var(--color-dark-750)]`}
-                style={{ borderLeftColor: !notif.read ? config.color : 'rgba(255,255,255,0.04)' }}
+                className={`surface-raised p-4 flex items-start gap-4 cursor-pointer transition-colors border-l-[3px] hover:bg-[var(--color-dark-900)]`}
+                style={{ borderLeftColor: !notif.read ? config.color : 'transparent' }}
                 onClick={() => !notif.read && markNotificationRead(notif.id)}
               >
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: config.bg }}>
-                  <NotifIcon size={18} style={{ color: config.color }} />
+                  <NotifIcon size={16} style={{ color: config.color }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-sm font-semibold ${!notif.read ? 'text-white' : 'text-[var(--color-dark-200)]'}`}>
+                    <span className={`text-[13px] font-semibold ${!notif.read ? 'text-[var(--color-dark-50)]' : 'text-[var(--color-dark-200)]'}`}>
                       {notif.title}
                     </span>
                     {!notif.read && (
                       <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)]" />
                     )}
                   </div>
-                  <p className={`text-[13px] leading-relaxed ${!notif.read ? 'text-[var(--color-dark-100)]' : 'text-[var(--color-dark-300)]'}`}>
+                  <p className={`text-[12px] leading-relaxed ${!notif.read ? 'text-[var(--color-dark-100)]' : 'text-[var(--color-dark-300)]'}`}>
                     {notif.message}
                   </p>
                 </div>
-                <div className="text-[11px] text-[var(--color-dark-400)] shrink-0 font-medium">
+                <div className="text-[10px] text-[var(--color-dark-400)] shrink-0 font-medium">
                   {timeAgo(notif.timestamp)}
                 </div>
               </motion.div>

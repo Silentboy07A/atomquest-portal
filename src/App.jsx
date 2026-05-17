@@ -54,11 +54,12 @@ export default function App() {
           position="top-right"
           toastOptions={{
             style: {
-              background: '#1c1c32',
-              color: '#e8e8f0',
-              border: '1px solid rgba(24, 95, 165, 0.2)',
-              borderRadius: '12px',
-              fontSize: '14px',
+              background: 'var(--color-dark-800)',
+              color: 'var(--color-dark-50)',
+              border: '1px solid var(--color-dark-600)',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontFamily: 'var(--font-sans)',
             },
           }}
         />
@@ -73,11 +74,12 @@ export default function App() {
         position="top-right"
         toastOptions={{
           style: {
-            background: '#1c1c32',
-            color: '#e8e8f0',
-            border: '1px solid rgba(24, 95, 165, 0.2)',
-            borderRadius: '12px',
-            fontSize: '14px',
+            background: 'var(--color-dark-800)',
+            color: 'var(--color-dark-50)',
+            border: '1px solid var(--color-dark-600)',
+            borderRadius: '8px',
+            fontSize: '13px',
+            fontFamily: 'var(--font-sans)',
           },
         }}
       />
