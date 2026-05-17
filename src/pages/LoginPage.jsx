@@ -9,7 +9,6 @@ export default function LoginPage({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Map credentials to our mock data users
   const credentialsMap = {
     'employee@atomquest.com': 'u1',
     'manager@atomquest.com': 'u4',
@@ -20,7 +19,7 @@ export default function LoginPage({ onLogin }) {
     if (e) e.preventDefault();
     setIsLoading(true);
     setTimeout(() => {
-      const userId = credentialsMap[email] || 'u1'; // fallback to u1
+      const userId = credentialsMap[email] || 'u1';
       setCurrentUser(userId);
       onLogin();
     }, 800);
@@ -37,93 +36,140 @@ export default function LoginPage({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-[#0d1117] text-white" style={{ fontFamily: 'var(--font-sans)' }}>
-      <div className="w-full max-w-[420px]">
-        {/* Card */}
-        <div className="bg-[#0d1117] rounded-2xl p-8 border" style={{ borderColor: 'rgba(255,255,255,0.08)', boxShadow: '0 0 40px rgba(6,182,212,0.05)' }}>
-          {/* Header */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center border border-cyan-500/30 mb-4">
-              <span className="text-cyan-400 font-bold text-xl tracking-tight">AQ</span>
-            </div>
-            <h1 className="text-2xl font-bold text-white mb-1">AtomQuest</h1>
-            <p className="text-sm text-slate-400">Performance Portal</p>
-          </div>
+    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden" style={{ backgroundColor: '#050508', fontFamily: 'var(--font-sans)' }}>
+      {/* Animated Mesh Gradient Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full mix-blend-screen filter blur-[100px] opacity-15 animate-blob" style={{ background: '#0d9488', animation: 'blob 15s infinite alternate' }} />
+        <div className="absolute top-[20%] -right-[10%] w-[60vw] h-[60vw] rounded-full mix-blend-screen filter blur-[100px] opacity-15 animate-blob" style={{ background: '#4f46e5', animation: 'blob 20s infinite alternate-reverse', animationDelay: '2s' }} />
+      </div>
 
-          {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-4 mb-6">
-            <div>
-              <input 
-                type="email" 
-                placeholder="Email address" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#161b22] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
-                required
-              />
-            </div>
-            <div className="relative">
-              <input 
-                type={showPassword ? "text" : "password"} 
-                placeholder="Password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#161b22] border border-white/10 rounded-lg pl-4 pr-10 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
-                required
-              />
-              <button 
-                type="button" 
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-            <button 
-              type="submit" 
-              disabled={isLoading}
-              className="w-full py-3 rounded-lg text-sm font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2"
-              style={{ background: 'linear-gradient(to right, #06b6d4, #0ea5e9)' }}
-            >
-              {isLoading ? <Loader2 size={16} className="animate-spin" /> : 'Sign In'}
-            </button>
-          </form>
+      {/* Grid Lines Overlay */}
+      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
-          {/* Divider */}
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-xs text-slate-400 font-medium">— or jump in as —</span>
-            <div className="flex-1 h-px bg-white/10" />
+      {/* Floating Card */}
+      <div className="relative w-full max-w-[400px] rounded-2xl p-12 z-10 animate-fade-in-up" style={{
+        background: 'rgba(255,255,255,0.03)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        boxShadow: '0 0 80px rgba(13, 148, 136, 0.15)'
+      }}>
+        
+        {/* Branding Header */}
+        <div className="flex flex-col items-center mb-[32px]">
+          <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #0d9488, #4f46e5)', marginBottom: '8px' }}>
+            <span className="text-white font-bold text-2xl tracking-tight">AQ</span>
           </div>
-
-          {/* Role Buttons */}
-          <div className="flex gap-2 justify-between">
-            <button 
-              onClick={() => autoFillAndLogin('employee@atomquest.com', 'emp123')}
-              className="flex-1 py-2 text-xs font-medium border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
-            >
-              👤 Employee
-            </button>
-            <button 
-              onClick={() => autoFillAndLogin('manager@atomquest.com', 'mgr123')}
-              className="flex-1 py-2 text-xs font-medium border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
-            >
-              🧑‍💼 Manager
-            </button>
-            <button 
-              onClick={() => autoFillAndLogin('admin@atomquest.com', 'adm123')}
-              className="flex-1 py-2 text-xs font-medium border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
-            >
-              🛡️ Admin
-            </button>
-          </div>
+          <h1 className="text-white font-bold tracking-tight" style={{ fontSize: '28px' }}>AtomQuest</h1>
+          <p className="text-[#8b949e] font-semibold tracking-widest uppercase mt-1" style={{ fontSize: '13px' }}>Performance Portal</p>
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-6">
-          <span className="text-[11px] text-slate-500 tracking-wide">AtomQuest Hackathon 1.0 · Alliance University</span>
+        {/* Form */}
+        <form onSubmit={handleLogin} className="flex flex-col gap-[16px]">
+          <div>
+            <input 
+              type="email" 
+              placeholder="Email address" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-[#0d1117] border rounded-lg px-4 h-[52px] text-[15px] text-white placeholder-[#8b949e] outline-none transition-all duration-200"
+              style={{ borderColor: 'rgba(255,255,255,0.1)' }}
+              onFocus={(e) => { e.target.style.borderColor = '#0d9488'; e.target.style.boxShadow = '0 0 10px rgba(13,148,136,0.3)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; }}
+              required
+            />
+          </div>
+          <div className="relative">
+            <input 
+              type={showPassword ? "text" : "password"} 
+              placeholder="Password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-[#0d1117] border rounded-lg pl-4 pr-10 h-[52px] text-[15px] text-white placeholder-[#8b949e] outline-none transition-all duration-200"
+              style={{ borderColor: 'rgba(255,255,255,0.1)' }}
+              onFocus={(e) => { e.target.style.borderColor = '#0d9488'; e.target.style.boxShadow = '0 0 10px rgba(13,148,136,0.3)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; }}
+              required
+            />
+            <button 
+              type="button" 
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b949e] hover:text-white transition-colors"
+            >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+          
+          <div className="flex justify-end mt-[-8px]">
+            <a href="#" className="text-[#8b949e] text-xs hover:text-white transition-colors">Forgot password?</a>
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            className="group relative w-full py-3 rounded-lg text-[14px] font-[600] text-white shadow-lg overflow-hidden disabled:opacity-70 mt-2"
+            style={{ background: 'linear-gradient(to right, #0d9488, #4f46e5)' }}
+          >
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 -translate-x-full group-hover:animate-shimmer" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }} />
+            <div className="relative flex items-center justify-center gap-2">
+              {isLoading ? <Loader2 size={16} className="animate-spin" /> : 'Sign In'}
+            </div>
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4" style={{ marginTop: '32px', marginBottom: '32px' }}>
+          <div className="flex-1 h-px bg-white/10" />
+          <span className="text-[#8b949e] text-xs font-medium">— or jump in as —</span>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
+
+        {/* Role Buttons */}
+        <div className="flex gap-3 justify-between">
+          {[
+            { label: 'Employee', email: 'employee@atomquest.com', pass: 'emp123' },
+            { label: 'Manager', email: 'manager@atomquest.com', pass: 'mgr123' },
+            { label: 'Admin', email: 'admin@atomquest.com', pass: 'adm123' }
+          ].map((role) => (
+            <button 
+              key={role.label}
+              onClick={() => autoFillAndLogin(role.email, role.pass)}
+              className="flex-1 py-3 flex items-center justify-center text-[12px] font-semibold text-[#8b949e] bg-[#0d1117] border border-white/5 rounded-lg hover:border-[#0d9488] hover:text-[#0d9488] transition-all duration-200 hover:scale-[1.02]"
+            >
+              {role.label}
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* Footer */}
+      <div className="absolute bottom-6 text-center z-10">
+        <span className="text-[11px] text-[#8b949e] tracking-wide">AtomQuest Hackathon 1.0 · Alliance University</span>
+      </div>
+
+      {/* CSS Animations */}
+      <style>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        @keyframes fade-in-up {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shimmer {
+          100% { transform: translateX(100%); }
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-shimmer {
+          animation: shimmer 1.5s infinite;
+        }
+      `}</style>
     </div>
   );
 }
