@@ -2,7 +2,7 @@
 
 AtomQuest Performance Portal is a high-fidelity, enterprise-grade HR platform built for performance management, goal tracking, and organizational analytics. It serves as a single source of truth for employees, managers, and administrators to track continuous improvement, review shared organizational goals, and monitor overall team execution.
 
-## 🚀 Tech Stack
+##  Tech Stack
 
 The application is built using a modern, performant, and highly scalable frontend architecture:
 
@@ -44,7 +44,7 @@ graph TD
     Views -->|Generate Reviews| Groq
 ```
 
-## 🔐 Demo Credentials
+##  Demo Credentials
 
 The portal is equipped with role-based access control. You can use the following credentials to explore the different perspectives of the platform:
 
@@ -63,7 +63,7 @@ The portal is equipped with role-based access control. You can use the following
 - **Password:** `adm123`
 - *Capabilities:* Full system access, view system-wide audit trail, manage shared organizational goals, oversee all employees.
 
-## 🏃‍♂️ Getting Started
+##  Getting Started
 
 1. Clone the repository
 2. Install dependencies: `npm install`
