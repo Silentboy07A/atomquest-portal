@@ -21,22 +21,22 @@ Below is the high-level architecture of the AtomQuest portal:
 
 ```mermaid
 graph TD
-    subgraph Frontend Client (React)
-        UI[User Interface / React Router]
-        Store[Zustand State Manager]
-        Views(Views: Dashboard, Goals, Analytics, Audit)
+    subgraph Frontend["Frontend Client (React)"]
+        UI["User Interface / React Router"]
+        Store["Zustand State Manager"]
+        Views("Views: Dashboard, Goals, Analytics, Audit")
         
         UI -->|Route Changes| Views
         Views <-->|Read/Update State| Store
     end
 
-    subgraph External Services
-        Groq[Groq AI API]
+    subgraph External["External Services"]
+        Groq["Groq AI API"]
     end
 
-    subgraph Data Layer (Simulated)
-        MockDB[(Mock Data Store)]
-        LocalStore[Local Storage]
+    subgraph Data["Data Layer (Simulated)"]
+        MockDB[("Mock Data Store")]
+        LocalStore["Local Storage"]
     end
 
     Store <-->|Persist State| LocalStore
